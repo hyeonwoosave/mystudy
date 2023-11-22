@@ -4,7 +4,9 @@ plugins {
     // 실핼할 수 있는 자바 애플리케이션을 생성하는 플러그인.
     // 이 플러그인을 추가하면 자바플러그인이 자동으로 추가된다.
     // 따로 자바 플러그인을 추가할 필요 없다.
-    id 'java'
+
+
+    id 'application'
 
     //Eclipse IDE 관련 작업을 수행할 수 있는 플러그인
     id 'eclipse'
@@ -35,13 +37,13 @@ java {
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
-/*
+
 // 'application' 플러그인과 관련된 설정이다.
 application {
-    mainClass = 'Hello' // 'run' 명령을 수행할 때 실행시킬 자바 클래스 이름을 지정
+    mainClass = 'bitcamp.myapp.App' // 'run' 명령을 수행할 때 실행시킬 자바 클래스 이름을 지정
 
 }
-*/
+
 
 // 단위 테스트를 수행할 때 사용할 설정
 tasks.named('test') {
@@ -60,7 +62,7 @@ tasks.withType(JavaCompile).configureEach {
 // eclipse 프로젝트 이름을 설정하기
 eclipse {
     project {
-        name = "java-basic"
+        name = "myapp"
     }
     jdt {
       sourceCompatibility = 17
