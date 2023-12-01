@@ -1,11 +1,11 @@
 package bitcamp.myapp;
 
-import java.util.Scanner;
+import static bitcamp.myapp.Prompt.input;
 
 public class AssignmentMenu {
 
   static void printMenu() {
-    System.out.println("[과제]");
+    System.out.println(MainMenu.AM_TITLE);
     System.out.println("1. 등록");
     System.out.println("2. 조회");
     System.out.println("3. 변경");
@@ -13,11 +13,11 @@ public class AssignmentMenu {
     System.out.println("0. 이전");
   }
 
-  static void execute(Scanner keyIn) {
+  static void execute() {
     printMenu();
 
     while (true) {
-      String input = App.prompt("메인/과제", keyIn);
+      String input = input("메인/과제");
 
       switch (input) {
         case "1":
