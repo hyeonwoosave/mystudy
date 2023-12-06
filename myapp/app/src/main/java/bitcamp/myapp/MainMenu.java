@@ -8,10 +8,12 @@ public class MainMenu {
   static final String APP_TITLE = ANSI_BOLD_RED + "[과제관리 시스템]" + ANSI_CLEAR;
   static final String AM_TITLE = ANSI_RED + "[과제]" + ANSI_CLEAR;
   static final String BM_TITLE = ANSI_RED + "[게시글]" + ANSI_CLEAR;
+  static final String MM_TITLE = ANSI_RED + "[회원]" + ANSI_CLEAR;
   static final String[] MENUS = {
       "1. 과제",
       "2. 게시글",
-      "3. 도움말",
+      "3. 회원",
+      "4. 도움말",
       ANSI_RED + "0. 종료" + ANSI_CLEAR
   };
 
@@ -37,6 +39,9 @@ public class MainMenu {
           BoardMenu.execute();
           break;
         case "3":
+          MemberMenu.execute();
+          break;
+        case "4":
           System.out.println("도움말입니다.");
           break;
         case "0":
