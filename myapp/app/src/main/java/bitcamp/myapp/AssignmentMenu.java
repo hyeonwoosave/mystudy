@@ -2,7 +2,11 @@ package bitcamp.myapp;
 
 import static bitcamp.myapp.Prompt.input;
 
+import bitcamp.myapp.vo.Assignment;
+
 public class AssignmentMenu {
+
+  static Assignment assignment = new Assignment();
 
   static void printMenu() {
     System.out.println(MainMenu.AM_TITLE);
@@ -17,20 +21,20 @@ public class AssignmentMenu {
     printMenu();
 
     while (true) {
-      String input = input("메인/과제");
+      String input = input("메인/과제> ");
 
       switch (input) {
         case "1":
-          System.out.println("등록입니다.");
+          assignment.add();
           break;
         case "2":
-          System.out.println("조회입니다.");
+          assignment.view();
           break;
         case "3":
-          System.out.println("변경입니다.");
+          assignment.modify();
           break;
         case "4":
-          System.out.println("삭제입니다.");
+          assignment.delete();
           break;
         case "0":
           MainMenu.printMenu();
