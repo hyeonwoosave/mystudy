@@ -1,4 +1,4 @@
-package bitcamp.myapp.util;
+package bitcamp.util;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -8,6 +8,7 @@ public class Prompt {
   Scanner keyIn;
 
   public Prompt(InputStream in) {
+
     keyIn = new Scanner(in);
   }
 
