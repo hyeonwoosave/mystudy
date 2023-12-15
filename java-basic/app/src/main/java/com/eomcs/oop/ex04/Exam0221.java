@@ -1,13 +1,13 @@
-// Integer 클래스: new Integer() vs Integer.valueOf() 
+// Integer 클래스: new Integer() vs Integer.valueOf()
 package com.eomcs.oop.ex04;
 
 public class Exam0221 {
   public static void main(String[] args) throws Exception {
-    Integer obj1 = new Integer(100); 
+    Integer obj1 = new Integer(100);
     Integer obj2 = new Integer(100);
     Integer obj3 = new Integer(100);
 
-    Integer i1 = Integer.valueOf(127); 
+    Integer i1 = Integer.valueOf(127);
     Integer i2 = Integer.valueOf(127);
     Integer i3 = Integer.valueOf(127);
 
@@ -24,8 +24,5 @@ public class Exam0221 {
 
   }
 }
-
-
-
 
 
