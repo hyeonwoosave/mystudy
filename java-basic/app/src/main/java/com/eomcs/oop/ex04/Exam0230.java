@@ -9,8 +9,8 @@ public class Exam0230 {
     // => 절대값 계산
     System.out.println(Math.abs(-200));
 
-    // => ceil() : 파라미터로 주어진 부동소수점이 바로 위 큰 정수 값을 리턴 = 올림
-    // => floor() : 파라미터로 주어진 부동소수점의 바로 밑 작은 정수 값을 리턴 = 내림
+    // => ceil() : 파라미터로 주어진 부동소수점이 바로 위 큰 정수 값을 리턴
+    // => floor() : 파라미터로 주어니 부동소수점의 바로 밑 작은 정수 값을 리턴
     System.out.println(Math.ceil(3.28)); // 4
     System.out.println(Math.floor(3.28)); // 3
 
@@ -27,5 +27,8 @@ public class Exam0230 {
 
   }
 }
+
+
+
 
 

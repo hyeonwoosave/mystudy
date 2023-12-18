@@ -9,13 +9,16 @@ public class Test1 {
     Car1 c1 = new Car1();
     Car1 c2 = new Car1();
     Car1 c3 = new Car1();
+
     // 이렇게 인스턴스 생성에 제한이 없다.
     System.out.println(c1 == c2);
     System.out.println(c1 == c3);
     System.out.println(c2 == c3);
-
   }
 
 }
+
+
+
 
 

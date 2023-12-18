@@ -5,9 +5,8 @@ package com.eomcs.oop.ex04.singleton;
 public class Test2 {
 
   public static void main(String[] args) {
-
-    // Car2 클래스의 생성자를 접근할 수 없기 때문에 호출할 수 없다.
-    // Car2 x = new Car2(); // 컴파일 오류!
+    // Car2 클래스의 생성자에 접근할 수 없기 때문에 호출할 수 없다.
+    //    Car2 x = new Car2(); // 컴파일 오류!
 
     Car2 x1 = Car2.getInstance();
     Car2 x2 = Car2.getInstance();
@@ -19,5 +18,8 @@ public class Test2 {
   }
 
 }
+
+
+
 
 
