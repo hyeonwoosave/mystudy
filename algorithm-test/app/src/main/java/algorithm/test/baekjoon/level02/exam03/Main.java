@@ -3,22 +3,21 @@ package algorithm.test.baekjoon.level02.exam03;
 import java.util.Scanner;
 
 public class Main {
+
   public static void main(String[] args) {
     Scanner sc = new Scanner(System.in);
     int a = sc.nextInt();
 
-    if ( ) {
-      System.out.println("A");
-    } else if (a >= 80) {
-      System.out.println("B");
-    } else if (a >= 70) {
-      System.out.println("C");
-    } else if (a >= 60) {
-      System.out.println("D");
+    if (a % 4 == 0) {
+      if (a % 100 != 0 || a % 400 == 0) {
+        System.out.println("1");
+      } else {
+        System.out.println("0");
+      }
     } else {
-      System.out.println("F");
+      System.out.println("0");
     }
-
   }
 }
+
 
