@@ -21,16 +21,11 @@ public class BoardModifyHandler extends AbstractMenuHandler {
   protected void action() {
     int index = this.prompt.inputInt("번호? ");
     Board oldBoard = this.objectRepository.get(index);
-    if (oldBoard == null) {
-      System.out.println("게시글 번호가 유효하지 않습니다.");
-      return;
-    }
-
     Board board = new Board();
     board.setTitle(this.prompt.input("제목(%s)? ", oldBoard.getTitle()));
     board.setContent(this.prompt.input("내용(%s)? ", oldBoard.getContent()));
     board.setWriter(this.prompt.input("작성자(%s)? ", oldBoard.getWriter()));
-    board.setCreatedDate(this.prompt.input("작성일(%s)? ", oldBoard.getCreatedDate()));
+    board.setCreatedDate(oldBoard.getCreatedDate());
 
     this.objectRepository.set(index, board);
   }

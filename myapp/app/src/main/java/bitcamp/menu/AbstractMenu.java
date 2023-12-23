@@ -8,6 +8,7 @@ public abstract class AbstractMenu implements Menu {
     this.title = title;
   }
 
+  @Override
   public String getTitle() {
     return title;
   }
