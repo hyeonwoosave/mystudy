@@ -34,7 +34,7 @@ dependencies {
 // 소스파일이 어떤 자바 버전으로 되어 있는지 Gradle에게 알려준다.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -65,9 +65,9 @@ eclipse {
         name = "myapp"
     }
     jdt {
-        sourceCompatibility = 17
-        targetCompatibility = 17
-        javaRuntimeName = "JavaSE-17"
+        sourceCompatibility = 21
+        targetCompatibility = 21
+        javaRuntimeName = "JavaSE-21"
     }
 }
 
