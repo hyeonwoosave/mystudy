@@ -1,14 +1,11 @@
 package bitcamp.util;
 
-public class LinkedList<E> {
+import java.util.Arrays;
+
+public class LinkedList<E> extends AbstractList<E> {
 
   private Node<E> first;
   private Node<E> last;
-  private int size;
-
-  public int size() {
-    return size;
-  }
 
   public void add(E value) {
     Node<E> node = new Node<>();
@@ -103,14 +100,14 @@ public class LinkedList<E> {
       throw new IndexOutOfBoundsException("무효한 인덱스입니다.");
     }
 
-    E old = null;
+    Node<E> deleted = null;
 
     if (size == 1) {
-      old = first.value;
+      deleted = first; // 삭제할 노드 보관
       first = last = null;
 
     } else if (index == 0) {
-      old = first.value;
+      deleted = first; // 삭제할 노드 보관
       first = first.next;
 
     } else {
@@ -119,7 +116,7 @@ public class LinkedList<E> {
       while (++cursor < index) {
         currNode = currNode.next;
       }
-      old = currNode.next.value;
+      deleted = currNode.next; // 삭제할 노드 보관
       currNode.next = currNode.next.next;
 
       if (index == (size - 1)) {
@@ -128,12 +125,16 @@ public class LinkedList<E> {
     }
 
     size--;
+
+    E old = deleted.value;
+    deleted.value = null; // 가비지가 되기 전에 다른 객체를 참조하던 것을 제거한다.
+    deleted.next = null; // 가비지가 되기 전에 다른 객체를 참조하던 것을 제거한다.
     return old;
   }
 
   public boolean remove(E value) {
-    Node<E> prevNode = null;
-    Node<E> node = first;
+    Node prevNode = null;
+    Node node = first;
 
     while (node != null) {
       if (node.value.equals(value)) {
@@ -161,23 +162,151 @@ public class LinkedList<E> {
     return true;
   }
 
+  public E[] toArray(final E[] arr) {
+    E[] values = arr;
+    if (values.length < size) {
+      values = Arrays.copyOf(arr, size);
+    }
+
+    int i = 0;
+    Node<E> node = first;
+
+    while (node != null) {
+      values[i++] = node.value;
+      node = node.next;
+    }
+
+    return values;
+  }
+
+//  // 1) 패키지 멤버 클래스로 Iterator 구현하기
+//  @Override
+//  public Iterator<E> iterator() {
+//    return new LinkedListIterator<>(this);
+//  }
+
+//  // 2) 스태틱 중첩 클래스로 Iterator 구현하기
+//  @Override
+//  public Iterator<E> iterator() {
+//    return new IteratorImpl<>(this);
+//  }
+//
+//  private static class IteratorImpl<E> implements Iterator<E> {
+//
+//    LinkedList<E> list;
+//    int cursor;
+//
+//    public IteratorImpl(LinkedList<E> list) {
+//      this.list = list;
+//    }
+//
+//    @Override
+//    public boolean hasNext() {
+//      return cursor >= 0 && cursor < list.size();
+//    }
+//
+//    @Override
+//    public E next() {
+//      return list.get(cursor++);
+//    }
+//  }
+
+//  // 3) 논스태틱 중첩 클래스로 Iterator 구현하기
+//  @Override
+//  public Iterator<E> iterator() {
+//    return new IteratorImpl<>();
+//  }
+//
+//  private class IteratorImpl<E> implements Iterator<E> {
+//
+//    Node<E> cursor = (Node<E>) LinkedList.this.first;
+//
+//    @Override
+//    public boolean hasNext() {
+//      return cursor != null;
+//    }
+//
+//    @Override
+//    public E next() {
+//      E value = cursor.value;
+//      cursor = cursor.next;
+//      return value;
+//    }
+//  }
+
+//  // 4) 로컬 클래스로 Iterator 구현하기
+//  @Override
+//  public Iterator<E> iterator() {
+//
+//    class IteratorImpl<E> implements Iterator<E> {
+//
+//      Node<E> cursor = (Node<E>) LinkedList.this.first;
+//
+//      @Override
+//      public boolean hasNext() {
+//        return cursor != null;
+//      }
+//
+//      @Override
+//      public E next() {
+//        E value = cursor.value;
+//        cursor = cursor.next;
+//        return value;
+//      }
+//    }
+//
+//    return new IteratorImpl<>();
+//  }
+
+//  // 5) 익명 클래스로 Iterator 구현하기
+//  @Override
+//  public Iterator<E> iterator() {
+//
+//    Iterator<E> obj = new Iterator<E>() {
+//
+//      Node<E> cursor = (Node<E>) LinkedList.this.first;
+//
+//      @Override
+//      public boolean hasNext() {
+//        return cursor != null;
+//      }
+//
+//      @Override
+//      public E next() {
+//        E value = cursor.value;
+//        cursor = cursor.next;
+//        return value;
+//      }
+//    };
+//
+//    return obj;
+//  }
+
+  // 6) 익명 클래스로 Iterator 구현하기 - 더 간결하게 표현하기
+  @Override
+  public Iterator<E> iterator() {
+    return new Iterator<E>() {
+      Node<E> cursor = (Node<E>) LinkedList.this.first;
+
+      @Override
+      public boolean hasNext() {
+        return cursor != null;
+      }
+
+      @Override
+      public E next() {
+        E value = cursor.value;
+        cursor = cursor.next;
+        return value;
+      }
+    };
+  }
+
   private static class Node<E> {
 
     E value;
     Node<E> next;
   }
 
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
