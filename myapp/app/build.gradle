@@ -21,6 +21,8 @@ repositories {
 // 여기에 지정해두면 빌드할 때 위에서 설정한 서버에 가서 라이브러리를 다운해온다.
 // 빌드할 때 자동으로 라이브러리를 다운로드 할 것이다.
 dependencies {
+    // JSON 라이브러리
+    implementation 'com.google.code.gson:gson:2.10.1'
     // 단위 테스트 할 때 사용할 라이브러리.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     // 단위 테스트와 관련된 라이브러리.
