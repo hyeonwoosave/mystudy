@@ -4,6 +4,7 @@ import hyeonwoo.myapp.dao.GameDao;
 import hyeonwoo.myapp.dao.DaoException;
 import hyeonwoo.myapp.vo.Game;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -19,11 +20,16 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public void add(Game game) {
-    try {
-      Statement stmt = con.createStatement();
-      stmt.executeUpdate(String.format(
-          "insert into games(title,produce,price,genre,release_date) values('%s','%s','%s','%s','%s')",
-          game.getTitle(), game.getProduce(), game.getPrice(), game.getGenre(), game.getReleaseDate()));
+    try(PreparedStatement pstmt = con.prepareStatement(
+        "insert into games(title,produce,price,genre,release_date) values(?,?,?,?,?)")) {
+
+      pstmt.setString(1, game.getTitle());
+      pstmt.setString(2, game.getProduce());
+      pstmt.setString(3, game.getPrice());
+      pstmt.setString(4, game.getGenre());
+      pstmt.setDate(5, game.getReleaseDate());
+
+      pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 입력 오류", e);
@@ -32,10 +38,11 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public int delete(int no) {
-    try {
-      Statement stmt = con.createStatement();
-      return stmt.executeUpdate(
-          String.format("delete from games where game_no=%d", no));
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "delete from games where game_no=?")) {
+      pstmt.setInt(1, no);
+
+      return pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 삭제 오류", e);
@@ -44,9 +51,9 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public List<Game> findAll() {
-    try {
-      Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery("select * from games");
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "select game_no, title, produce, price, genre, release_date from games order by game_no desc");
+        ResultSet rs = pstmt.executeQuery()) {
 
       ArrayList<Game> list = new ArrayList<>();
 
@@ -70,11 +77,12 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public Game findBy(int no) {
-    try {
-      Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery("select * from games where game_no=" + no);
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "select * from games where game_no=?")) {
 
-      ArrayList<Game> list = new ArrayList<>();
+      pstmt.setInt(1, no);
+
+      try (ResultSet rs = pstmt.executeQuery()) {
 
       if (rs.next()) {
         Game game = new Game();
@@ -88,7 +96,7 @@ public class GameDaoImpl implements GameDao {
         return game;
       }
       return null;
-
+    }
     } catch (Exception e) {
       throw new DaoException("데이터 가져오기 오류", e);
     }
@@ -96,12 +104,17 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public int update(Game game) {
-    try {
-      Statement stmt = con.createStatement();
-      return stmt.executeUpdate(String.format(
-          "update games set title='%s', produce='%s', price='%s', genre='%s', release_date='%s' where game_no=%d",
-          game.getTitle(), game.getProduce(), game.getPrice(), game.getGenre(), game.getReleaseDate(),
-          game.getNo()));
+    try(PreparedStatement pstmt = con.prepareStatement(
+        "update games set title=?, produce=?, price=?, genre=?, release_date=? where game_no=?")) {
+
+      pstmt.setString(1, game.getTitle());
+      pstmt.setString(2, game.getProduce());
+      pstmt.setString(3, game.getPrice());
+      pstmt.setString(4, game.getGenre());
+      pstmt.setDate(5, game.getReleaseDate());
+      pstmt.setInt(6, game.getNo());
+
+      return pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 변경 오류", e);

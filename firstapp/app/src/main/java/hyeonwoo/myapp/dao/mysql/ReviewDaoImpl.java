@@ -4,6 +4,7 @@ import hyeonwoo.myapp.dao.ReviewDao;
 import hyeonwoo.myapp.dao.DaoException;
 import hyeonwoo.myapp.vo.Review;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -19,11 +20,16 @@ public class ReviewDaoImpl implements ReviewDao {
 
   @Override
   public void add(Review review) {
-    try {
-      Statement stmt = con.createStatement();
-      stmt.executeUpdate(String.format(
-          "insert into reviews(game,title,rating,content,writer) values('%s','%s','%s','%s','%s')",
-          review.getGame(), review.getTitle(), review.getRating(), review.getContent(), review.getWriter()));
+    try(PreparedStatement pstmt = con.prepareStatement(
+        "insert into reviews(game,title,rating,content,writer) values(?,?,?,?,?)")) {
+
+      pstmt.setString(1, review.getGame());
+      pstmt.setString(2, review.getTitle());
+      pstmt.setString(3, review.getRating());
+      pstmt.setString(4, review.getContent());
+      pstmt.setString(5, review.getWriter());
+
+      pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 입력 오류", e);
@@ -32,9 +38,11 @@ public class ReviewDaoImpl implements ReviewDao {
 
   @Override
   public int delete(int no) {
-    try {
-      Statement stmt = con.createStatement();
-      return stmt.executeUpdate(String.format("delete from reviews where review_no=%d", no));
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "delete from reviews where review_no=?")) {
+      pstmt.setInt(1, no);
+
+      return pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 삭제 오류", e);
@@ -43,9 +51,9 @@ public class ReviewDaoImpl implements ReviewDao {
 
   @Override
   public List<Review> findAll() {
-    try {
-      Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery("select * from reviews");
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "select review_no, game, title, rating, content, writer, created_date from reviews order by review_no desc");
+        ResultSet rs = pstmt.executeQuery()) {
 
       ArrayList<Review> list = new ArrayList<>();
 
@@ -70,24 +78,27 @@ public class ReviewDaoImpl implements ReviewDao {
 
   @Override
   public Review findBy(int no) {
-    try {
-      Statement stmt = con.createStatement();
-      ResultSet rs = stmt.executeQuery("select * from reviews where review_no = " + no);
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "select * from reviews where review_no=?")) {
 
-      if (rs.next()) {
-        Review review = new Review();
-        review.setNo(rs.getInt("review_no"));
-        review.setGame(rs.getString("game"));
-        review.setTitle(rs.getString("title"));
-        review.setRating(rs.getString("rating"));
-        review.setContent(rs.getString("content"));
-        review.setWriter(rs.getString("writer"));
-        review.setCreatedDate(rs.getDate("created_date"));
+      pstmt.setInt(1, no);
 
-        return review;
+      try (ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+          Review review = new Review();
+          review.setNo(rs.getInt("review_no"));
+          review.setGame(rs.getString("game"));
+          review.setTitle(rs.getString("title"));
+          review.setRating(rs.getString("rating"));
+          review.setContent(rs.getString("content"));
+          review.setWriter(rs.getString("writer"));
+          review.setCreatedDate(rs.getDate("created_date"));
+
+          return review;
+        }
+        return null;
       }
-      return null;
-
     } catch (Exception e) {
       throw new DaoException("데이터 가져오기 오류", e);
     }
@@ -95,11 +106,17 @@ public class ReviewDaoImpl implements ReviewDao {
 
   @Override
   public int update(Review review) {
-    try {
-      Statement stmt = con.createStatement();
-      return stmt.executeUpdate(String.format(
-          "update reviews set game='%s', title='%s', rating='%s', content='%s', writer='%s' where review_no=%d",
-          review.getGame(), review.getTitle(), review.getRating(), review.getContent(), review.getWriter(), review.getNo()));
+    try (PreparedStatement pstmt = con.prepareStatement(
+        "update reviews set game=?, title=?, rating=?, content=?, writer=? where review_no=?")) {
+
+      pstmt.setString(1, review.getGame());
+      pstmt.setString(2, review.getTitle());
+      pstmt.setString(3, review.getRating());
+      pstmt.setString(4, review.getContent());
+      pstmt.setString(5, review.getWriter());
+      pstmt.setInt(6, review.getNo());
+
+      return pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 변경 오류", e);
