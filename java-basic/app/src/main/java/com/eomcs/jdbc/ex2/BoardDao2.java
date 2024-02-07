@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardDao {
+public class BoardDao2 {
   public int delete(int no) throws Exception {
     try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studydb",
         "study", "Bitcamp!@#123"); Statement stmt = con.createStatement()) {
