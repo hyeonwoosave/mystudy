@@ -1,107 +1,58 @@
-package hyeonwoo.myapp;
+package bitcamp.myapp;
 
-import hyeonwoo.menu.MenuGroup;
-import hyeonwoo.myapp.dao.GameDao;
-import hyeonwoo.myapp.dao.ReviewDao;
-import hyeonwoo.myapp.dao.UserDao;
-import hyeonwoo.myapp.dao.mysql.GameDaoImpl;
-import hyeonwoo.myapp.dao.mysql.ReviewDaoImpl;
-import hyeonwoo.myapp.dao.mysql.UserDaoImpl;
-import hyeonwoo.myapp.handler.game.GameAddHandler;
-import hyeonwoo.myapp.handler.game.GameDeleteHandler;
-import hyeonwoo.myapp.handler.game.GameListHandler;
-import hyeonwoo.myapp.handler.game.GameModifyHandler;
-import hyeonwoo.myapp.handler.game.GameViewHandler;
-import hyeonwoo.myapp.handler.member.UserAddHandler;
-import hyeonwoo.myapp.handler.member.UserDeleteHandler;
-import hyeonwoo.myapp.handler.member.UserListHandler;
-import hyeonwoo.myapp.handler.member.UserModifyHandler;
-import hyeonwoo.myapp.handler.member.UserViewHandler;
-import hyeonwoo.myapp.handler.review.ReviewAddHandler;
-import hyeonwoo.myapp.handler.review.ReviewDeleteHandler;
-import hyeonwoo.myapp.handler.review.ReviewListHandler;
-import hyeonwoo.myapp.handler.review.ReviewModifyHandler;
-import hyeonwoo.myapp.handler.review.ReviewViewHandler;
-import hyeonwoo.util.Prompt;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.File;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
 
 public class App {
 
-  Prompt prompt = new Prompt(System.in);
+  public static void main(String[] args) throws Exception {
+    System.out.println("과제관리 시스템 서버 실행!");
 
-  GameDao gameDao;
-  ReviewDao reviewDao;
-  UserDao userDao;
+    // 톰캣 서버를 구동시키는 객체 준비
+    Tomcat tomcat = new Tomcat();
 
-  MenuGroup mainMenu;
+    // 서버의 포트 번호 설정
+    tomcat.setPort(8888);
 
-  App() {
-    prepareDatabase();
-    prepareMenu();
+    // 톰캣 서버를 실행하는 동안 사용할 임시 폴더 지정
+    tomcat.setBaseDir("./temp");
+
+    // 톰캣 서버의 연결 정보를 설정
+    Connector connector = tomcat.getConnector();
+    connector.setURIEncoding("UTF-8");
+
+    // 톰캣 서버에 배포할 웹 애플리케이션의 환경 정보 준비
+    StandardContext ctx = (StandardContext) tomcat.addWebapp(
+        "/", // 컨텍스트 경로(웹 애플리케이션 경로)
+        new File("src/main/webapp").getAbsolutePath() // 웹 애플리케이션 파일이 있는 실제 경로
+    );
+    ctx.setReloadable(true);
+
+    // 웹 애플리케이션 기타 정보 설정
+    WebResourceRoot resources = new StandardRoot(ctx);
+
+    // 웹 애플리케이션의 서블릿 클래스 등록
+    resources.addPreResources(new DirResourceSet(
+        resources, // 루트 웹 애플리케이션 정보
+        "/WEB-INF/classes", // 서블릿 클래스 파일의 위치 정보
+        new File("build/classes/java/main").getAbsolutePath(), // 서블릿 클래스 파일이 있는 실제 경로
+        "/" // 웹 애플리케이션 내부 경로
+    ));
+
+    // 웹 애플리케이션 설정 정보를 웹 애플리케이션 환경 정보에 등록
+    ctx.setResources(resources);
+
+    // 톰캣 서버 구동
+    tomcat.start();
+
+    // 톰캣 서버를 구동한 후 종료될 때까지 JVM을 끝내지 말고 기다린다.
+    tomcat.getServer().await();
+
+    System.out.println("서버 종료!");
   }
-
-  public static void main(String[] args) {
-    System.out.println("[게임 관리]");
-    new App().run();
-  }
-
-  void prepareDatabase() {
-    try {
-      // JVM이 JDBC 드라이버 파일(.jar)에 설정된대로 자동으로 처리한다.
-//      Driver driver = new com.mysql.cj.jdbc.Driver();
-//      DriverManager.registerDriver(driver);
-
-      Connection con = DriverManager.getConnection(
-          // "jdbc:mysql://localhost/studydb", "study", "Bitcamp!@#123");
-          "jdbc:mysql://db-ld2bd-kr.vpc-pub-cdb.ntruss.com/studydb", "study", "Bitcamp!@#123");
-
-      gameDao = new GameDaoImpl(con);
-      reviewDao = new ReviewDaoImpl(con);
-      userDao = new UserDaoImpl(con);
-
-    } catch (Exception e) {
-      System.out.println("통신 오류!");
-      e.printStackTrace();
-    }
-  }
-
-  void prepareMenu() {
-    mainMenu = MenuGroup.getInstance("메인");
-
-    MenuGroup assignmentMenu = mainMenu.addGroup("게임");
-    assignmentMenu.addItem("등록", new GameAddHandler(gameDao, prompt));
-    assignmentMenu.addItem("조회", new GameViewHandler(gameDao, prompt));
-    assignmentMenu.addItem("변경", new GameModifyHandler(gameDao, prompt));
-    assignmentMenu.addItem("삭제", new GameDeleteHandler(gameDao, prompt));
-    assignmentMenu.addItem("목록", new GameListHandler(gameDao, prompt));
-
-    MenuGroup boardMenu = mainMenu.addGroup("리뷰");
-    boardMenu.addItem("등록", new ReviewAddHandler(reviewDao, prompt));
-    boardMenu.addItem("조회", new ReviewViewHandler(reviewDao, prompt));
-    boardMenu.addItem("변경", new ReviewModifyHandler(reviewDao, prompt));
-    boardMenu.addItem("삭제", new ReviewDeleteHandler(reviewDao, prompt));
-    boardMenu.addItem("목록", new ReviewListHandler(reviewDao, prompt));
-
-    MenuGroup userMenu = mainMenu.addGroup("유저");
-    userMenu.addItem("등록", new UserAddHandler(userDao, prompt));
-    userMenu.addItem("조회", new UserViewHandler(userDao, prompt));
-    userMenu.addItem("변경", new UserModifyHandler(userDao, prompt));
-    userMenu.addItem("삭제", new UserDeleteHandler(userDao, prompt));
-    userMenu.addItem("목록", new UserListHandler(userDao, prompt));
-
-  }
-
-  void run() {
-    while (true) {
-      try {
-        mainMenu.execute(prompt);
-        prompt.close();
-        break;
-      } catch (Exception e) {
-        System.out.println("예외 발생!");
-      }
-    }
-  }
-
 }

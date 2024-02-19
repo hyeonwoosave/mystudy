@@ -1,33 +1,30 @@
-package hyeonwoo.myapp.dao.mysql;
+package bitcamp.myapp.dao.mysql;
 
-import hyeonwoo.myapp.dao.GameDao;
-import hyeonwoo.myapp.dao.DaoException;
-import hyeonwoo.myapp.vo.Game;
+import bitcamp.myapp.dao.DaoException;
+import bitcamp.util.DBConnectionPool;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameDaoImpl implements GameDao {
+public class GameDaoImpl implements bitcamp.myapp.dao.GameDao {
 
-  Connection con;
+  DBConnectionPool connectionPool;
 
-  public GameDaoImpl(Connection con) {
-    this.con = con;
+  public GameDaoImpl(DBConnectionPool connectionPool) {
+    this.connectionPool = connectionPool;
   }
 
   @Override
-  public void add(Game game) {
-    try(PreparedStatement pstmt = con.prepareStatement(
-        "insert into games(title,produce,price,genre,release_date) values(?,?,?,?,?)")) {
+  public void add(bitcamp.myapp.vo.Game game) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "insert into assignments(title,content,deadline) values(?,?,?)")) {
 
       pstmt.setString(1, game.getTitle());
-      pstmt.setString(2, game.getProduce());
-      pstmt.setString(3, game.getPrice());
-      pstmt.setString(4, game.getGenre());
-      pstmt.setDate(5, game.getReleaseDate());
+      pstmt.setString(2, game.getContent());
+      pstmt.setDate(3, game.getDeadline());
 
       pstmt.executeUpdate();
 
@@ -38,8 +35,9 @@ public class GameDaoImpl implements GameDao {
 
   @Override
   public int delete(int no) {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "delete from games where game_no=?")) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "delete from assignments where assignment_no=?")) {
       pstmt.setInt(1, no);
 
       return pstmt.executeUpdate();
@@ -50,21 +48,19 @@ public class GameDaoImpl implements GameDao {
   }
 
   @Override
-  public List<Game> findAll() {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "select game_no, title, produce, price, genre, release_date from games order by game_no desc");
+  public List<bitcamp.myapp.vo.Game> findAll() {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "select assignment_no, title, deadline from assignments order by assignment_no desc");
         ResultSet rs = pstmt.executeQuery()) {
 
-      ArrayList<Game> list = new ArrayList<>();
+      ArrayList<bitcamp.myapp.vo.Game> list = new ArrayList<>();
 
       while (rs.next()) {
-        Game game = new Game();
-        game.setNo(rs.getInt("game_no"));
+        bitcamp.myapp.vo.Game game = new bitcamp.myapp.vo.Game();
+        game.setNo(rs.getInt("assignment_no"));
         game.setTitle(rs.getString("title"));
-        game.setProduce(rs.getString("produce"));
-        game.setPrice(rs.getString("price"));
-        game.setGenre(rs.getString("genre"));
-        game.setReleaseDate(rs.getDate("release_date"));
+        game.setDeadline(rs.getDate("deadline"));
 
         list.add(game);
       }
@@ -76,43 +72,41 @@ public class GameDaoImpl implements GameDao {
   }
 
   @Override
-  public Game findBy(int no) {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "select * from games where game_no=?")) {
+  public bitcamp.myapp.vo.Game findBy(int no) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "select * from assignments where assignment_no=?")) {
 
       pstmt.setInt(1, no);
 
       try (ResultSet rs = pstmt.executeQuery()) {
 
-      if (rs.next()) {
-        Game game = new Game();
-        game.setNo(rs.getInt("game_no"));
-        game.setTitle(rs.getString("title"));
-        game.setProduce(rs.getString("produce"));
-        game.setPrice(rs.getString("price"));
-        game.setGenre(rs.getString("genre"));
-        game.setReleaseDate(rs.getDate("release_date"));
-
-        return game;
+        if (rs.next()) {
+          bitcamp.myapp.vo.Game game = new bitcamp.myapp.vo.Game();
+          game.setNo(rs.getInt("assignment_no"));
+          game.setTitle(rs.getString("title"));
+          game.setContent(rs.getString("content"));
+          game.setDeadline(rs.getDate("deadline"));
+          return game;
+        }
+        return null;
       }
-      return null;
-    }
+
     } catch (Exception e) {
       throw new DaoException("데이터 가져오기 오류", e);
     }
   }
 
   @Override
-  public int update(Game game) {
-    try(PreparedStatement pstmt = con.prepareStatement(
-        "update games set title=?, produce=?, price=?, genre=?, release_date=? where game_no=?")) {
+  public int update(bitcamp.myapp.vo.Game game) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "update assignments set title=?, content=?, deadline=? where assignment_no=?")) {
 
       pstmt.setString(1, game.getTitle());
-      pstmt.setString(2, game.getProduce());
-      pstmt.setString(3, game.getPrice());
-      pstmt.setString(4, game.getGenre());
-      pstmt.setDate(5, game.getReleaseDate());
-      pstmt.setInt(6, game.getNo());
+      pstmt.setString(2, game.getContent());
+      pstmt.setDate(3, game.getDeadline());
+      pstmt.setInt(4, game.getNo());
 
       return pstmt.executeUpdate();
 

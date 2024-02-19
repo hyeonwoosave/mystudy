@@ -2,30 +2,57 @@ package hyeonwoo.myapp.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class Review implements Serializable {
 
   private static final long serialVersionUID = 100L;
 
+  private int category;
   private int no;
-  private String game;
   private String title;
-  private String rating;
   private String content;
-  private String writer;
+  private Member writer;
   private Date createdDate;
-  
+  private List<AttachedFile> files;
+  private int fileCount;
+
   @Override
   public String toString() {
-    return "Review{" +
-        "no=" + no +
-        ", game='" + game + '\'' +
+    return "Board{" +
+        "category=" + category +
+        ", no=" + no +
         ", title='" + title + '\'' +
-        ", rating='" + rating + '\'' +
         ", content='" + content + '\'' +
-        ", writer='" + writer + '\'' +
+        ", writer=" + writer +
         ", createdDate=" + createdDate +
+        ", files=" + files +
+        ", fileCount=" + fileCount +
         '}';
+  }
+
+  public int getCategory() {
+    return category;
+  }
+
+  public void setCategory(int category) {
+    this.category = category;
+  }
+
+  public Member getWriter() {
+    return writer;
+  }
+
+  public void setWriter(Member writer) {
+    this.writer = writer;
+  }
+
+  public int getFileCount() {
+    return fileCount;
+  }
+
+  public void setFileCount(int fileCount) {
+    this.fileCount = fileCount;
   }
 
   public int getNo() {
@@ -44,14 +71,6 @@ public class Review implements Serializable {
     this.title = title;
   }
 
-  public String getGame() {
-    return game;
-  }
-
-  public void setGame(String game) {
-    this.game = game;
-  }
-
   public String getContent() {
     return content;
   }
@@ -60,27 +79,19 @@ public class Review implements Serializable {
     this.content = content;
   }
 
-  public String getWriter() {
-    return writer;
-  }
-
-  public String getRating() {
-    return rating;
-  }
-
-  public void setRating(String rating) {
-    this.rating = rating;
-  }
-
-  public void setWriter(String writer) {
-    this.writer = writer;
-  }
-
   public Date getCreatedDate() {
     return createdDate;
   }
 
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
+  }
+
+  public List<AttachedFile> getFiles() {
+    return files;
+  }
+
+  public void setFiles(List<AttachedFile> files) {
+    this.files = files;
   }
 }

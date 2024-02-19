@@ -1,32 +1,29 @@
-package hyeonwoo.myapp.dao.mysql;
+package bitcamp.myapp.dao.mysql;
 
-import hyeonwoo.myapp.dao.DaoException;
-import hyeonwoo.myapp.dao.UserDao;
-import hyeonwoo.myapp.vo.User;
+import bitcamp.myapp.dao.DaoException;
+import bitcamp.util.DBConnectionPool;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
 
-  Connection con;
+  DBConnectionPool connectionPool;
 
-  public UserDaoImpl(Connection con) {
-    this.con = con;
+  public UserDaoImpl(DBConnectionPool connectionPool) {
+    this.connectionPool = connectionPool;
   }
 
   @Override
-  public void add(User user) {
-    try(PreparedStatement pstmt = con.prepareStatement(
-        "insert into users(email,name,password) values(?,?,sha2(?,256))")) {
-
+  public void add(bitcamp.myapp.vo.User user) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "insert into members(email,name,password) values(?,?,sha2(?,256))")) {
       pstmt.setString(1, user.getEmail());
       pstmt.setString(2, user.getName());
       pstmt.setString(3, user.getPassword());
-
       pstmt.executeUpdate();
 
     } catch (Exception e) {
@@ -36,10 +33,10 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public int delete(int no) {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "delete from users where user_no=?")){
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "delete from members where member_no=?")) {
       pstmt.setInt(1, no);
-
       return pstmt.executeUpdate();
 
     } catch (Exception e) {
@@ -48,16 +45,17 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public List<User> findAll() {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "select user_no, email, name, created_date from users order by user_no desc");
-        ResultSet rs = pstmt.executeQuery()) {
+  public List<bitcamp.myapp.vo.User> findAll() {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "select member_no, email, name, created_date from members");
+        ResultSet rs = pstmt.executeQuery();) {
 
-      ArrayList<User> list = new ArrayList<>();
+      ArrayList<bitcamp.myapp.vo.User> list = new ArrayList<>();
 
       while (rs.next()) {
-        User user = new User();
-        user.setNo(rs.getInt("user_no"));
+        bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
+        user.setNo(rs.getInt("member_no"));
         user.setEmail(rs.getString("email"));
         user.setName(rs.getString("name"));
         user.setCreatedDate(rs.getDate("created_date"));
@@ -72,44 +70,73 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public User findBy(int no) {
-    try (PreparedStatement pstmt = con.prepareStatement(
-        "select * from users where user_no=?")) {
-
+  public bitcamp.myapp.vo.User findBy(int no) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "select member_no, email, name, created_date from members where member_no=?")) {
       pstmt.setInt(1, no);
 
       try (ResultSet rs = pstmt.executeQuery()) {
-
         if (rs.next()) {
-          User user = new User();
-          user.setNo(rs.getInt("user_no"));
+          bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
+          user.setNo(rs.getInt("member_no"));
           user.setEmail(rs.getString("email"));
           user.setName(rs.getString("name"));
           user.setCreatedDate(rs.getDate("created_date"));
-
           return user;
         }
         return null;
       }
+
     } catch (Exception e) {
       throw new DaoException("데이터 가져오기 오류", e);
     }
   }
 
   @Override
-  public int update(User user) {
-    try(PreparedStatement pstmt = con.prepareStatement(
-        "update users set email=?, name=?, password=sha2(?,256) where user_no=?")) {
+  public int update(bitcamp.myapp.vo.User user) {
+    String sql = null;
+    if (user.getPassword().length() == 0) {
+      sql = "update members set email=?, name=? where member_no=?";
+    } else {
+      sql = "update members set email=?, name=?, password=sha2(?,256) where member_no=?";
+    }
 
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(sql)) {
       pstmt.setString(1, user.getEmail());
       pstmt.setString(2, user.getName());
       pstmt.setString(3, user.getPassword());
       pstmt.setInt(4, user.getNo());
-
       return pstmt.executeUpdate();
 
     } catch (Exception e) {
       throw new DaoException("데이터 변경 오류", e);
+    }
+  }
+
+  @Override
+  public bitcamp.myapp.vo.User findByEmailAndPassword(String email, String password) {
+    try (Connection con = connectionPool.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(
+            "select member_no, email, name, created_date from members where email=? and password=sha2(?,256)")) {
+      pstmt.setString(1, email);
+      pstmt.setString(2, password);
+
+      try (ResultSet rs = pstmt.executeQuery()) {
+        if (rs.next()) {
+          bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
+          user.setNo(rs.getInt("member_no"));
+          user.setEmail(rs.getString("email"));
+          user.setName(rs.getString("name"));
+          user.setCreatedDate(rs.getDate("created_date"));
+          return user;
+        }
+        return null;
+      }
+
+    } catch (Exception e) {
+      throw new DaoException("데이터 가져오기 오류", e);
     }
   }
 }

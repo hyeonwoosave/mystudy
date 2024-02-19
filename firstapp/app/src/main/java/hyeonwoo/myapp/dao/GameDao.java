@@ -1,18 +1,17 @@
 package hyeonwoo.myapp.dao;
 
-import hyeonwoo.myapp.vo.Game;
 import java.util.List;
 
 public interface GameDao {
 
-  void add(Game game);
+  void add(bitcamp.myapp.vo.Game game);
 
   int delete(int no);
 
-  List<Game> findAll();
+  List<bitcamp.myapp.vo.Game> findAll();
 
-  Game findBy(int no);
+  bitcamp.myapp.vo.Game findBy(int no);
 
-  int update(Game game);
+  int update(bitcamp.myapp.vo.Game game);
 
 }

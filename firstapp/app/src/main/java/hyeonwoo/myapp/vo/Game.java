@@ -1,4 +1,4 @@
-package hyeonwoo.myapp.vo;
+package bitcamp.myapp.vo;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -9,20 +9,16 @@ public class Game implements Serializable {
 
   private int no;
   private String title;
-  private String produce;
-  private String price;
-  private String genre;
-  private Date releaseDate;
+  private String content;
+  private Date deadline;
 
   @Override
   public String toString() {
-    return "Game{" +
+    return "Assignment{" +
         "no=" + no +
         ", title='" + title + '\'' +
-        ", produce='" + produce + '\'' +
-        ", price='" + price + '\'' +
-        ", genre='" + genre + '\'' +
-        ", releaseDate=" + releaseDate +
+        ", content='" + content + '\'' +
+        ", deadline=" + deadline +
         '}';
   }
 
@@ -34,14 +30,6 @@ public class Game implements Serializable {
     this.no = no;
   }
 
-  public String getProduce() {
-    return produce;
-  }
-
-  public void setProduce(String produce) {
-    this.produce = produce;
-  }
-
   public String getTitle() {
     return title;
   }
@@ -50,27 +38,19 @@ public class Game implements Serializable {
     this.title = title;
   }
 
-  public String getGenre() {
-    return genre;
+  public String getContent() {
+    return content;
   }
 
-  public void setGenre(String genre) {
-    this.genre = genre;
+  public void setContent(String content) {
+    this.content = content;
   }
 
-  public String getPrice() {
-    return price;
+  public Date getDeadline() {
+    return deadline;
   }
 
-  public void setPrice(String price) {
-    this.price = price;
-  }
-
-  public Date getReleaseDate() {
-    return releaseDate;
-  }
-
-  public void setReleaseDate(Date releaseDate) {
-    this.releaseDate = releaseDate;
+  public void setDeadline(Date deadline) {
+    this.deadline = deadline;
   }
 }
