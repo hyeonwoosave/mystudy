@@ -1,17 +1,18 @@
-package bitcamp.myapp.dao;
+package hyeonwoo.myapp.dao;
 
+import hyeonwoo.myapp.vo.Review;
 import java.util.List;
 
 public interface ReviewDao {
 
-  void add(bitcamp.myapp.vo.FreeBoard freeBoard);
+  void add(Review freeBoard);
 
   int delete(int no);
 
-  List<bitcamp.myapp.vo.FreeBoard> findAll(int category);
+  List<Review> findAll(int category);
 
-  bitcamp.myapp.vo.FreeBoard findBy(int no);
+  Review findBy(int no);
 
-  int update(bitcamp.myapp.vo.FreeBoard freeBoard);
+  int update(Review freeBoard);
 
 }

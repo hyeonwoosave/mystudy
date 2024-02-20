@@ -1,4 +1,4 @@
-package bitcamp.myapp.vo;
+package hyeonwoo.myapp.vo;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -9,16 +9,24 @@ public class Game implements Serializable {
 
   private int no;
   private String title;
-  private String content;
-  private Date deadline;
+  private int rating;
+  private int price;
+  private String produce;
+  private String genre;
+  private String info;
+  private Date release_date;
 
   @Override
   public String toString() {
-    return "Assignment{" +
+    return "Game{" +
         "no=" + no +
         ", title='" + title + '\'' +
-        ", content='" + content + '\'' +
-        ", deadline=" + deadline +
+        ", rating=" + rating +
+        ", price=" + price +
+        ", produce='" + produce + '\'' +
+        ", genre='" + genre + '\'' +
+        ", info='" + info + '\'' +
+        ", release_date=" + release_date +
         '}';
   }
 
@@ -38,19 +46,52 @@ public class Game implements Serializable {
     this.title = title;
   }
 
-  public String getContent() {
-    return content;
+  public int getRating() {
+    return rating;
   }
 
-  public void setContent(String content) {
-    this.content = content;
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 
-  public Date getDeadline() {
-    return deadline;
+  public int getPrice() {
+    return price;
   }
 
-  public void setDeadline(Date deadline) {
-    this.deadline = deadline;
+  public void setPrice(int price) {
+    this.price = price;
   }
+
+  public String getProduce() {
+    return produce;
+  }
+
+  public void setProduce(String produce) {
+    this.produce = produce;
+  }
+
+  public String getGenre() {
+    return genre;
+  }
+
+  public void setGenre(String genre) {
+    this.genre = genre;
+  }
+
+  public String getInfo() {
+    return info;
+  }
+
+  public void setInfo(String info) {
+    this.info = info;
+  }
+
+  public Date getRelease_date() {
+    return release_date;
+  }
+
+  public void setRelease_date(Date release_date) {
+    this.release_date = release_date;
+  }
+
 }

@@ -2,57 +2,34 @@ package hyeonwoo.myapp.vo;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 public class Qna implements Serializable {
 
   private static final long serialVersionUID = 100L;
 
-  private int category;
   private int no;
   private String title;
   private String content;
-  private Member writer;
+  private User writer;
   private Date createdDate;
-  private List<AttachedFile> files;
-  private int fileCount;
 
   @Override
   public String toString() {
-    return "Board{" +
-        "category=" + category +
-        ", no=" + no +
+    return "Qna{" +
+        "no=" + no +
         ", title='" + title + '\'' +
         ", content='" + content + '\'' +
         ", writer=" + writer +
         ", createdDate=" + createdDate +
-        ", files=" + files +
-        ", fileCount=" + fileCount +
         '}';
   }
 
-  public int getCategory() {
-    return category;
-  }
-
-  public void setCategory(int category) {
-    this.category = category;
-  }
-
-  public Member getWriter() {
+  public User getWriter() {
     return writer;
   }
 
-  public void setWriter(Member writer) {
+  public void setWriter(User writer) {
     this.writer = writer;
-  }
-
-  public int getFileCount() {
-    return fileCount;
-  }
-
-  public void setFileCount(int fileCount) {
-    this.fileCount = fileCount;
   }
 
   public int getNo() {
@@ -85,13 +62,5 @@ public class Qna implements Serializable {
 
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
-  }
-
-  public List<AttachedFile> getFiles() {
-    return files;
-  }
-
-  public void setFiles(List<AttachedFile> files) {
-    this.files = files;
   }
 }

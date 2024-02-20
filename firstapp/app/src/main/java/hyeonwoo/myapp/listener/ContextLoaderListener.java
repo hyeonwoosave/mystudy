@@ -1,7 +1,17 @@
-package bitcamp.myapp.listener;
+package hyeonwoo.myapp.listener;
 
-import bitcamp.util.DBConnectionPool;
-import bitcamp.util.TransactionManager;
+import hyeonwoo.util.DBConnectionPool;
+import hyeonwoo.util.TransactionManager;
+import hyeonwoo.myapp.dao.FreeBoardDao;
+import hyeonwoo.myapp.dao.GameDao;
+import hyeonwoo.myapp.dao.QnaDao;
+import hyeonwoo.myapp.dao.ReviewDao;
+import hyeonwoo.myapp.dao.UserDao;
+import hyeonwoo.myapp.dao.mysql.FreeBoardDaoImpl;
+import hyeonwoo.myapp.dao.mysql.GameDaoImpl;
+import hyeonwoo.myapp.dao.mysql.QnaDaoImpl;
+import hyeonwoo.myapp.dao.mysql.ReviewDaoImpl;
+import hyeonwoo.myapp.dao.mysql.UserDaoImpl;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,18 +30,21 @@ public class ContextLoaderListener implements ServletContextListener {
     DBConnectionPool connectionPool = new DBConnectionPool(
         "jdbc:mysql://localhost/studydb", "study", "Bitcamp!@#123");
 
-    bitcamp.myapp.dao.GameDao gameDao = new bitcamp.myapp.dao.mysql.GameDaoImpl(connectionPool);
-    bitcamp.myapp.dao.UserDao userDao = new bitcamp.myapp.dao.mysql.UserDaoImpl(connectionPool);
-    bitcamp.myapp.dao.ReviewDao reviewDao = new bitcamp.myapp.dao.mysql.ReviewDaoImpl(connectionPool);
-    AttachedFileDao attachedFileDao = new AttachedFileDaoImpl(connectionPool);
+    GameDao gameDao = new GameDaoImpl(connectionPool);
+    UserDao userDao = new UserDaoImpl(connectionPool);
+    FreeBoardDao freeBoardDao = new FreeBoardDaoImpl(connectionPool);
+    ReviewDao reviewDao = new ReviewDaoImpl(connectionPool);
+    QnaDao qnaDao = new QnaDaoImpl(connectionPool);
+
     TransactionManager txManager = new TransactionManager(connectionPool);
 
     // 서블릿에서 사용할 수 있도록 웹애플리케이션 저장소에 보관한다.
     ServletContext 웹애플리케이션저장소 = sce.getServletContext();
-    웹애플리케이션저장소.setAttribute("assignmentDao", gameDao);
-    웹애플리케이션저장소.setAttribute("memberDao", userDao);
-    웹애플리케이션저장소.setAttribute("boardDao", reviewDao);
-    웹애플리케이션저장소.setAttribute("attachedFileDao", attachedFileDao);
+    웹애플리케이션저장소.setAttribute("gameDao", gameDao);
+    웹애플리케이션저장소.setAttribute("userDao", userDao);
+    웹애플리케이션저장소.setAttribute("freeboardDao", freeBoardDao);
+    웹애플리케이션저장소.setAttribute("reviewDao", reviewDao);
+    웹애플리케이션저장소.setAttribute("qnaDao", qnaDao);
     웹애플리케이션저장소.setAttribute("txManager", txManager);
   }
 }

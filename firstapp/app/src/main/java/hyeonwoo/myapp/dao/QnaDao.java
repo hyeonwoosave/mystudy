@@ -1,17 +1,18 @@
 package hyeonwoo.myapp.dao;
 
+import hyeonwoo.myapp.vo.Qna;
 import java.util.List;
 
 public interface QnaDao {
 
-  void add(bitcamp.myapp.vo.FreeBoard freeBoard);
+  void add(Qna freeBoard);
 
   int delete(int no);
 
-  List<bitcamp.myapp.vo.FreeBoard> findAll(int category);
+  List<Qna> findAll();
 
-  bitcamp.myapp.vo.FreeBoard findBy(int no);
+  Qna findBy(int no);
 
-  int update(bitcamp.myapp.vo.FreeBoard freeBoard);
+  int update(Qna freeBoard);
 
 }

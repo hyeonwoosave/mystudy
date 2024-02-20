@@ -1,4 +1,4 @@
-package bitcamp.myapp.dao;
+package hyeonwoo.myapp.dao;
 
 // 이 클래스의 목적
 // - RuntimeException의 기능을 확장하는 것이 아니다.

@@ -1,14 +1,16 @@
-package bitcamp.myapp.dao.mysql;
+package hyeonwoo.myapp.dao.mysql;
 
-import bitcamp.myapp.dao.DaoException;
-import bitcamp.util.DBConnectionPool;
+import hyeonwoo.myapp.dao.DaoException;
+import hyeonwoo.util.DBConnectionPool;
+import hyeonwoo.myapp.dao.UserDao;
+import hyeonwoo.myapp.vo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
+public class UserDaoImpl implements UserDao {
 
   DBConnectionPool connectionPool;
 
@@ -17,13 +19,14 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   }
 
   @Override
-  public void add(bitcamp.myapp.vo.User user) {
+  public void add(User user) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "insert into members(email,name,password) values(?,?,sha2(?,256))")) {
-      pstmt.setString(1, user.getEmail());
-      pstmt.setString(2, user.getName());
-      pstmt.setString(3, user.getPassword());
+            "insert into users(name,tel,email,password) values(?,?,?,sha2(?,256))")) {
+      pstmt.setString(1, user.getName());
+      pstmt.setString(2, user.getTel());
+      pstmt.setString(3, user.getEmail());
+      pstmt.setString(4, user.getPassword());
       pstmt.executeUpdate();
 
     } catch (Exception e) {
@@ -35,7 +38,7 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   public int delete(int no) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "delete from members where member_no=?")) {
+            "delete from users where user_no=?")) {
       pstmt.setInt(1, no);
       return pstmt.executeUpdate();
 
@@ -45,19 +48,20 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   }
 
   @Override
-  public List<bitcamp.myapp.vo.User> findAll() {
+  public List<User> findAll() {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "select member_no, email, name, created_date from members");
+            "select user_no, name, tel, email, created_date from users");
         ResultSet rs = pstmt.executeQuery();) {
 
-      ArrayList<bitcamp.myapp.vo.User> list = new ArrayList<>();
+      ArrayList<User> list = new ArrayList<>();
 
       while (rs.next()) {
-        bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
-        user.setNo(rs.getInt("member_no"));
-        user.setEmail(rs.getString("email"));
+        User user = new User();
+        user.setNo(rs.getInt("user_no"));
         user.setName(rs.getString("name"));
+        user.setTel(rs.getString("tel"));
+        user.setEmail(rs.getString("email"));
         user.setCreatedDate(rs.getDate("created_date"));
 
         list.add(user);
@@ -70,18 +74,19 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   }
 
   @Override
-  public bitcamp.myapp.vo.User findBy(int no) {
+  public User findBy(int no) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "select member_no, email, name, created_date from members where member_no=?")) {
+            "select user_no, name, tel, email, created_date from users where user_no=?")) {
       pstmt.setInt(1, no);
 
       try (ResultSet rs = pstmt.executeQuery()) {
         if (rs.next()) {
-          bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
-          user.setNo(rs.getInt("member_no"));
-          user.setEmail(rs.getString("email"));
+          User user = new User();
+          user.setNo(rs.getInt("user_no"));
           user.setName(rs.getString("name"));
+          user.setTel(rs.getString("tel"));
+          user.setEmail(rs.getString("email"));
           user.setCreatedDate(rs.getDate("created_date"));
           return user;
         }
@@ -94,20 +99,21 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   }
 
   @Override
-  public int update(bitcamp.myapp.vo.User user) {
+  public int update(User user) {
     String sql = null;
     if (user.getPassword().length() == 0) {
-      sql = "update members set email=?, name=? where member_no=?";
+      sql = "update users set name=?, tel=?, email=? where user_no=?";
     } else {
-      sql = "update members set email=?, name=?, password=sha2(?,256) where member_no=?";
+      sql = "update users set name=?, tel=?, email=?, password=sha2(?,256) where user_no=?";
     }
 
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, user.getEmail());
-      pstmt.setString(2, user.getName());
-      pstmt.setString(3, user.getPassword());
-      pstmt.setInt(4, user.getNo());
+      pstmt.setString(1, user.getName());
+      pstmt.setString(2, user.getTel());
+      pstmt.setString(3, user.getEmail());
+      pstmt.setString(4, user.getPassword());
+
       return pstmt.executeUpdate();
 
     } catch (Exception e) {
@@ -116,19 +122,20 @@ public class UserDaoImpl implements bitcamp.myapp.dao.UserDao {
   }
 
   @Override
-  public bitcamp.myapp.vo.User findByEmailAndPassword(String email, String password) {
+  public User findByEmailAndPassword(String email, String password) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "select member_no, email, name, created_date from members where email=? and password=sha2(?,256)")) {
+            "select user_no, name, tel, email, created_date from users where email=? and password=sha2(?,256)")) {
       pstmt.setString(1, email);
       pstmt.setString(2, password);
 
       try (ResultSet rs = pstmt.executeQuery()) {
         if (rs.next()) {
-          bitcamp.myapp.vo.User user = new bitcamp.myapp.vo.User();
-          user.setNo(rs.getInt("member_no"));
-          user.setEmail(rs.getString("email"));
+          User user = new User();
+          user.setNo(rs.getInt("user_no"));
           user.setName(rs.getString("name"));
+          user.setTel(rs.getString("tel"));
+          user.setEmail(rs.getString("email"));
           user.setCreatedDate(rs.getDate("created_date"));
           return user;
         }

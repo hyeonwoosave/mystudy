@@ -1,14 +1,17 @@
 package hyeonwoo.myapp.dao.mysql;
 
-import bitcamp.myapp.dao.DaoException;
-import bitcamp.util.DBConnectionPool;
+import hyeonwoo.myapp.dao.DaoException;
+import hyeonwoo.util.DBConnectionPool;
+import hyeonwoo.myapp.dao.FreeBoardDao;
+import hyeonwoo.myapp.vo.FreeBoard;
+import hyeonwoo.myapp.vo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
+public class FreeBoardDaoImpl implements FreeBoardDao {
 
   DBConnectionPool connectionPool;
 
@@ -17,23 +20,21 @@ public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
   }
 
   @Override
-  public void add(bitcamp.myapp.vo.FreeBoard freeBoard) {
+  public void add(FreeBoard freeboard) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "insert into boards(title,content,writer,category) values(?,?,?,?)",
+            "insert into freeboards(title,content,writer) values(?,?,?)",
             PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-      pstmt.setString(1, freeBoard.getTitle());
-      pstmt.setString(2, freeBoard.getContent());
-      pstmt.setInt(3, freeBoard.getWriter().getNo());
-      pstmt.setInt(4, freeBoard.getCategory());
+      pstmt.setString(1, freeboard.getTitle());
+      pstmt.setString(2, freeboard.getContent());
+      pstmt.setInt(3, freeboard.getWriter().getNo());
 
       pstmt.executeUpdate();
 
-      // 자동 생성된 PK 값을 가져와서 Board 객체에 저장한다.
       try (ResultSet keyRs = pstmt.getGeneratedKeys()) {
         keyRs.next();
-        freeBoard.setNo(keyRs.getInt(1));
+        freeboard.setNo(keyRs.getInt(1));
       }
 
 
@@ -46,7 +47,7 @@ public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
   public int delete(int no) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "delete from boards where board_no=?")) {
+            "delete from freeboards where freeboard_no=?")) {
       pstmt.setInt(1, no);
       return pstmt.executeUpdate();
 
@@ -56,46 +57,37 @@ public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
   }
 
   @Override
-  public List<bitcamp.myapp.vo.FreeBoard> findAll(int category) {
+  public List<FreeBoard> findAll() {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
             "select\n"
-                + "  b.board_no,\n"
-                + "  b.title,\n"
-                + "  b.created_date,\n"
-                + "  count(file_no) file_count,\n"
-                + "  m.member_no,\n"
-                + "  m.name\n"
+                + "  f.freeboard_no,\n"
+                + "  f.title,\n"
+                + "  f.created_date,\n"
+                + "  u.user_no,\n"
+                + "  u.name\n"
                 + "from\n"
-                + "  boards b left outer join board_files bf on b.board_no=bf.board_no\n"
-                + "  inner join members m on b.writer=m.member_no\n"
-                + "where\n"
-                + "  b.category=?\n"
-                + "group by\n"
-                + "  board_no\n"
+                + "  inner join users u on f.writer=u.user_no\n"
                 + "order by\n"
-                + "  board_no desc")) {
-
-      pstmt.setInt(1, category);
+                + "  freeboard_no desc")) {
 
       try (ResultSet rs = pstmt.executeQuery()) {
 
-        ArrayList<bitcamp.myapp.vo.FreeBoard> list = new ArrayList<>();
+        ArrayList<FreeBoard> list = new ArrayList<>();
 
         while (rs.next()) {
-          bitcamp.myapp.vo.FreeBoard freeBoard = new bitcamp.myapp.vo.FreeBoard();
-          freeBoard.setNo(rs.getInt("board_no"));
-          freeBoard.setTitle(rs.getString("title"));
-          freeBoard.setCreatedDate(rs.getDate("created_date"));
-          freeBoard.setFileCount(rs.getInt("file_count"));
+          FreeBoard freeboard = new FreeBoard();
+          freeboard.setNo(rs.getInt("freeboard_no"));
+          freeboard.setTitle(rs.getString("title"));
+          freeboard.setCreatedDate(rs.getDate("created_date"));
 
-          bitcamp.myapp.vo.User writer = new bitcamp.myapp.vo.User();
-          writer.setNo(rs.getInt("member_no"));
+          User writer = new User();
+          writer.setNo(rs.getInt("user_no"));
           writer.setName(rs.getString("name"));
 
-          freeBoard.setWriter(writer);
+          freeboard.setWriter(writer);
 
-          list.add(freeBoard);
+          list.add(freeboard);
         }
         return list;
       }
@@ -106,37 +98,37 @@ public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
   }
 
   @Override
-  public bitcamp.myapp.vo.FreeBoard findBy(int no) {
+  public FreeBoard findBy(int no) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
             "select"
-                + "  b.board_no,\n"
-                + "  b.title,\n"
-                + "  b.content,"
-                + "  b.created_date,\n"
-                + "  m.member_no,\n"
-                + "  m.name\n"
+                + "  f.freeboard_no,\n"
+                + "  f.title,\n"
+                + "  f.content,"
+                + "  f.created_date,\n"
+                + "  u.user_no,\n"
+                + "  u.name\n"
                 + " from "
-                + "  boards b inner join members m on b.writer=m.member_no\n"
-                + " where board_no=?")) {
+                + "  freeboards f inner join users u on f.writer=u.user_no\n"
+                + " where freeboard_no=?")) {
 
       pstmt.setInt(1, no);
 
       try (ResultSet rs = pstmt.executeQuery()) {
         if (rs.next()) {
-          bitcamp.myapp.vo.FreeBoard freeBoard = new bitcamp.myapp.vo.FreeBoard();
-          freeBoard.setNo(rs.getInt("board_no"));
-          freeBoard.setTitle(rs.getString("title"));
-          freeBoard.setContent(rs.getString("content"));
-          freeBoard.setCreatedDate(rs.getDate("created_date"));
+          FreeBoard freeboard = new FreeBoard();
+          freeboard.setNo(rs.getInt("freeboard_no"));
+          freeboard.setTitle(rs.getString("title"));
+          freeboard.setContent(rs.getString("content"));
+          freeboard.setCreatedDate(rs.getDate("created_date"));
 
-          bitcamp.myapp.vo.User writer = new bitcamp.myapp.vo.User();
-          writer.setNo(rs.getInt("member_no"));
+          User writer = new User();
+          writer.setNo(rs.getInt("user_no"));
           writer.setName(rs.getString("name"));
 
-          freeBoard.setWriter(writer);
+          freeboard.setWriter(writer);
 
-          return freeBoard;
+          return freeboard;
         }
         return null;
       }
@@ -146,14 +138,14 @@ public class FreeBoardDaoImpl implements bitcamp.myapp.dao.ReviewDao {
   }
 
   @Override
-  public int update(bitcamp.myapp.vo.FreeBoard freeBoard) {
+  public int update(FreeBoard freeboard) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "update boards set title=?, content=? where board_no=?")) {
+            "update freeboards set title=?, content=? where freeboard_no=?")) {
 
-      pstmt.setString(1, freeBoard.getTitle());
-      pstmt.setString(2, freeBoard.getContent());
-      pstmt.setInt(3, freeBoard.getNo());
+      pstmt.setString(1, freeboard.getTitle());
+      pstmt.setString(2, freeboard.getContent());
+      pstmt.setInt(3, freeboard.getNo());
 
       return pstmt.executeUpdate();
 

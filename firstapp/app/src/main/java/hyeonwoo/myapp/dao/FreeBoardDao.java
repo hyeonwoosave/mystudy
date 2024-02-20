@@ -1,17 +1,18 @@
 package hyeonwoo.myapp.dao;
 
+import hyeonwoo.myapp.vo.FreeBoard;
 import java.util.List;
 
 public interface FreeBoardDao {
 
-  void add(bitcamp.myapp.vo.FreeBoard freeBoard);
+  void add(FreeBoard freeboard);
 
   int delete(int no);
 
-  List<bitcamp.myapp.vo.FreeBoard> findAll(int category);
+  List<FreeBoard> findAll();
 
-  bitcamp.myapp.vo.FreeBoard findBy(int no);
+  FreeBoard findBy(int no);
 
-  int update(bitcamp.myapp.vo.FreeBoard freeBoard);
+  int update(FreeBoard freeboard);
 
 }

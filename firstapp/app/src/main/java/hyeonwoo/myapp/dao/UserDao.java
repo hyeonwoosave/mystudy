@@ -1,18 +1,19 @@
-package bitcamp.myapp.dao;
+package hyeonwoo.myapp.dao;
 
+import hyeonwoo.myapp.vo.User;
 import java.util.List;
 
 public interface UserDao {
 
-  public void add(bitcamp.myapp.vo.User user);
+  public void add(User user);
 
   public int delete(int no);
 
-  public List<bitcamp.myapp.vo.User> findAll();
+  public List<User> findAll();
 
-  public bitcamp.myapp.vo.User findBy(int no);
+  public User findBy(int no);
 
-  public int update(bitcamp.myapp.vo.User user);
+  public int update(User user);
 
-  public bitcamp.myapp.vo.User findByEmailAndPassword(String email, String password);
+  public User findByEmailAndPassword(String email, String password);
 }

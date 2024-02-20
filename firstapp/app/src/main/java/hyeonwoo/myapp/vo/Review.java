@@ -11,23 +11,22 @@ public class Review implements Serializable {
   private int category;
   private int no;
   private String title;
+  private int rating;
   private String content;
-  private Member writer;
+  private User writer;
   private Date createdDate;
-  private List<AttachedFile> files;
-  private int fileCount;
+
 
   @Override
   public String toString() {
-    return "Board{" +
+    return "Review{" +
         "category=" + category +
         ", no=" + no +
         ", title='" + title + '\'' +
+        ", rating=" + rating +
         ", content='" + content + '\'' +
         ", writer=" + writer +
         ", createdDate=" + createdDate +
-        ", files=" + files +
-        ", fileCount=" + fileCount +
         '}';
   }
 
@@ -39,20 +38,12 @@ public class Review implements Serializable {
     this.category = category;
   }
 
-  public Member getWriter() {
+  public User getWriter() {
     return writer;
   }
 
-  public void setWriter(Member writer) {
+  public void setWriter(User writer) {
     this.writer = writer;
-  }
-
-  public int getFileCount() {
-    return fileCount;
-  }
-
-  public void setFileCount(int fileCount) {
-    this.fileCount = fileCount;
   }
 
   public int getNo() {
@@ -71,6 +62,14 @@ public class Review implements Serializable {
     this.title = title;
   }
 
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
+
   public String getContent() {
     return content;
   }
@@ -85,13 +84,5 @@ public class Review implements Serializable {
 
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
-  }
-
-  public List<AttachedFile> getFiles() {
-    return files;
-  }
-
-  public void setFiles(List<AttachedFile> files) {
-    this.files = files;
   }
 }
