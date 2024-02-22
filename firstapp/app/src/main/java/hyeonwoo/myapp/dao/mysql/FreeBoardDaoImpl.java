@@ -67,7 +67,10 @@ public class FreeBoardDaoImpl implements FreeBoardDao {
                 + "  u.user_no,\n"
                 + "  u.name\n"
                 + "from\n"
+                + "  freeboards f left outer join freeboard_files ff on f.freeboard_no=ff.freeboard_no\n"
                 + "  inner join users u on f.writer=u.user_no\n"
+                + "group by\n"
+                + "  freeboard_no\n"
                 + "order by\n"
                 + "  freeboard_no desc")) {
 
@@ -104,7 +107,7 @@ public class FreeBoardDaoImpl implements FreeBoardDao {
             "select"
                 + "  f.freeboard_no,\n"
                 + "  f.title,\n"
-                + "  f.content,"
+                + "  f.content,\n"
                 + "  f.created_date,\n"
                 + "  u.user_no,\n"
                 + "  u.name\n"

@@ -40,8 +40,8 @@ public class GameAddServlet extends HttpServlet {
     try {
       Game game = new Game();
       game.setTitle(request.getParameter("title"));
-      game.setRating(request.getIntHeader("rating"));
-      game.setPrice(request.getIntHeader("price"));
+      game.setRating(Integer.parseInt(request.getParameter("rating")));
+      game.setPrice(Integer.parseInt(request.getParameter("price")));
       game.setProduce(request.getParameter("produce"));
       game.setGenre(request.getParameter("genre"));
       game.setInfo(request.getParameter("info"));

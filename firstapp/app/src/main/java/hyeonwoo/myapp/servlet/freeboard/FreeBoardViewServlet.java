@@ -1,9 +1,12 @@
 package hyeonwoo.myapp.servlet.freeboard;
 
+import hyeonwoo.myapp.dao.AttachedFileDao;
 import hyeonwoo.myapp.dao.FreeBoardDao;
+import hyeonwoo.myapp.vo.AttachedFile;
 import hyeonwoo.myapp.vo.FreeBoard;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,11 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 public class FreeBoardViewServlet extends HttpServlet {
 
   private FreeBoardDao freeboardDao;
+  private AttachedFileDao attachedFileDao;
 
   @Override
   public void init() {
     this.freeboardDao = (FreeBoardDao) this.getServletContext().getAttribute("freeboardDao");
+    this.attachedFileDao = (AttachedFileDao) this.getServletContext()
+        .getAttribute("attachedFileDao");
   }
+
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -47,6 +54,7 @@ public class FreeBoardViewServlet extends HttpServlet {
           return;
 
       }
+      List<AttachedFile> files = attachedFileDao.findAllByBoardNo(no);
 
       out.println("<form action='/freeboard/update'>");
       out.println("<div>");
@@ -61,6 +69,17 @@ public class FreeBoardViewServlet extends HttpServlet {
       out.println("<div>");
       out.printf("  작성자: <input readonly type='text' value='%s'>\n", freeboard.getWriter().getName());
       out.println("</div>");
+
+        out.println("<div>");
+        out.println("  첨부파일: <input multiple name='files' type='file'>");
+        out.println("  <ul>");
+        for (AttachedFile file : files) {
+          out.printf("    <li>%s <a href='/board/file/delete?no=%d'>삭제</a></li>\n",
+              file.getFilePath(),
+              file.getNo());
+        }
+        out.println("  </ul>");
+        out.println("</div>");
 
       out.println("<div>");
       out.println("  <button>변경</button>");

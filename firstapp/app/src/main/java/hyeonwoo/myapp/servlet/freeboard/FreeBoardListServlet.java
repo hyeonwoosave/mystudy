@@ -38,7 +38,7 @@ public class FreeBoardListServlet extends GenericServlet {
     out.println("<body>");
     out.println("<h1>자유게시판</h1>");
 
-    out.println("<a href='/freeboard/form.html '>새 리뷰</a>\n");
+    out.println("<a href='/freeboard/add '>새 리뷰</a>\n");
 
     try {
       out.println("<table border='1'>");
@@ -51,7 +51,7 @@ public class FreeBoardListServlet extends GenericServlet {
 
       for (FreeBoard freeboard : list) {
         out.printf(
-            "<tr> <td>%d</td> <td><a href='/freeboard/view?no=%1$d'>%s</a></td> <td>%s</td> <td>%s</td> <td>%d</td> </tr>\n",
+            "<tr> <td>%d</td> <td><a href='/freeboard/view?no=%1$d'>%s</a></td> <td>%s</td> <td>%s</td> </tr>\n",
             freeboard.getNo(),
             freeboard.getTitle(),
             freeboard.getWriter().getName(),

@@ -36,6 +36,9 @@ public class ReviewFormServlet extends HttpServlet {
     out.println("      제목: <input name='title' type='text'>");
     out.println("</div>");
     out.println("<div>");
+    out.println("      평점: <input name='rating' type='text'>");
+    out.println("</div>");
+    out.println("<div>");
     out.println("      내용: <textarea name='content'></textarea>");
     out.println("</div>");
 

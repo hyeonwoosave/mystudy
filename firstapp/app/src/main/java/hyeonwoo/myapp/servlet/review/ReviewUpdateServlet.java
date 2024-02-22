@@ -68,7 +68,7 @@ public class ReviewUpdateServlet extends HttpServlet {
       }
 
       review.setTitle(request.getParameter("title"));
-      review.setRating(request.getIntHeader("rating"));
+      review.setRating(Integer.parseInt(request.getParameter("rating")));
       review.setContent(request.getParameter("content"));
 
       txManager.startTransaction();

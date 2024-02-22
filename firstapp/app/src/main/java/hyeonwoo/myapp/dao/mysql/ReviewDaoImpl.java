@@ -70,7 +70,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 + "  u.user_no,\n"
                 + "  u.name\n"
                 + "from\n"
-                + "  inner join users u on r.writer=u.user_no\n"
+                + "  reviews r inner join users u on r.writer=u.user_no\n"
                 + "where\n"
                 + "  r.category=?\n"
                 + "group by\n"

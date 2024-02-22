@@ -4,6 +4,7 @@ drop table if exists games restrict;
 drop table if exists reviews restrict;
 drop table if exists users restrict;
 drop table if exists freeboards restrict;
+drop table if exists freeboard_files restrict;
 drop table if exists qnas restrict;
 
 create table games(
@@ -47,6 +48,17 @@ alter table freeboards
   add constraint primary key (freeboard_no),
   modify column freeboard_no int not null auto_increment;
 
+create table freeboard_files(
+  file_no int not null,
+  file_path varchar(255) not null,
+  freeboard_no int not null
+);
+
+alter table freeboard_files
+  add constraint primary key (file_no),
+  modify column file_no int not null auto_increment,
+  add constraint freeboard_files_fk foreign key (freeboard_no) references freeboards(freeboard_no);
+
 create table qnas(
   qna_no int not null,
   title varchar(255) not null,
@@ -71,3 +83,12 @@ create table users(
 alter table users
   add constraint primary key (user_no),
   modify column user_no int not null auto_increment;
+
+alter table freeboards
+  add constraint freeboards_fk foreign key (writer) references users(user_no);
+
+alter table qnas
+  add constraint qnas_fk foreign key (writer) references users(user_no);
+
+alter table reviews
+  add constraint reviews_fk foreign key (writer) references users(user_no);

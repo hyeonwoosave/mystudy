@@ -1,11 +1,14 @@
 package hyeonwoo.myapp.servlet.freeboard;
 
+import hyeonwoo.myapp.dao.AttachedFileDao;
 import hyeonwoo.myapp.dao.FreeBoardDao;
+import hyeonwoo.myapp.vo.AttachedFile;
 import hyeonwoo.myapp.vo.FreeBoard;
 import hyeonwoo.myapp.vo.User;
 import hyeonwoo.util.TransactionManager;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,11 +20,14 @@ public class FreeBoardAddServlet extends HttpServlet {
 
   private TransactionManager txManager;
   private FreeBoardDao freeboardDao;
+  private AttachedFileDao attachedFileDao;
   
   @Override
   public void init() {
     txManager = (TransactionManager) this.getServletContext().getAttribute("txManager");
     this.freeboardDao = (FreeBoardDao) this.getServletContext().getAttribute("freeboardDao");
+    this.attachedFileDao = (AttachedFileDao) this.getServletContext()
+        .getAttribute("attachedFileDao");
   }
 
   @Override
@@ -53,9 +59,29 @@ public class FreeBoardAddServlet extends HttpServlet {
     freeboard.setContent(request.getParameter("content"));
     freeboard.setWriter(loginUser);
 
+    ArrayList<AttachedFile> attachedFiles = new ArrayList<>();
+
+    String[] files = request.getParameterValues("files");
+    if (files != null) {
+      for (String file : files) {
+        if (file.length() == 0) {
+          continue;
+        }
+        attachedFiles.add(new AttachedFile().filePath(file));
+      }
+    }
+
     try {
       txManager.startTransaction();
       freeboardDao.add(freeboard);
+
+      if (attachedFiles.size() > 0) {
+        for (AttachedFile attachedFile : attachedFiles) {
+          attachedFile.setFreeBoardNo(freeboard.getNo());
+        }
+        attachedFileDao.addAll(attachedFiles);
+      }
+
       txManager.commit();
 
       out.println("<p>등록했습니다.</p>");

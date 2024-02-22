@@ -13,7 +13,7 @@ import org.apache.catalina.webresources.StandardRoot;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("과제관리 시스템 서버 실행!");
+        System.out.println("서버 실행!");
 
         // 톰캣 서버를 구동시키는 객체 준비
         Tomcat tomcat = new Tomcat();

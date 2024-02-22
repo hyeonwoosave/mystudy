@@ -103,21 +103,36 @@ public class UserDaoImpl implements UserDao {
     String sql = null;
     if (user.getPassword().length() == 0) {
       sql = "update users set name=?, tel=?, email=? where user_no=?";
+
+      try (Connection con = connectionPool.getConnection();
+          PreparedStatement pstmt = con.prepareStatement(sql)) {
+        pstmt.setString(1, user.getName());
+        pstmt.setString(2, user.getTel());
+        pstmt.setString(3, user.getEmail());
+        pstmt.setInt(4, user.getNo());
+
+        return pstmt.executeUpdate();
+
+      } catch (Exception e) {
+        throw new DaoException("데이터 변경 오류", e);
+      }
+
     } else {
       sql = "update users set name=?, tel=?, email=?, password=sha2(?,256) where user_no=?";
-    }
 
-    try (Connection con = connectionPool.getConnection();
-        PreparedStatement pstmt = con.prepareStatement(sql)) {
-      pstmt.setString(1, user.getName());
-      pstmt.setString(2, user.getTel());
-      pstmt.setString(3, user.getEmail());
-      pstmt.setString(4, user.getPassword());
+      try (Connection con = connectionPool.getConnection();
+          PreparedStatement pstmt = con.prepareStatement(sql)) {
+        pstmt.setString(1, user.getName());
+        pstmt.setString(2, user.getTel());
+        pstmt.setString(3, user.getEmail());
+        pstmt.setString(4, user.getPassword());
+        pstmt.setInt(5, user.getNo());
 
-      return pstmt.executeUpdate();
+        return pstmt.executeUpdate();
 
-    } catch (Exception e) {
-      throw new DaoException("데이터 변경 오류", e);
+      } catch (Exception e) {
+        throw new DaoException("데이터 변경 오류", e);
+      }
     }
   }
 

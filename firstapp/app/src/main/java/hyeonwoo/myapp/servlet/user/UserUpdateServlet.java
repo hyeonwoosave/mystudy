@@ -53,6 +53,7 @@ public class UserUpdateServlet extends HttpServlet {
       user.setTel(request.getParameter("tel"));
       user.setEmail(request.getParameter("email"));
       user.setPassword(request.getParameter("password"));
+      user.setCreatedDate(old.getCreatedDate());
 
       userDao.update(user);
       out.println("<p>회원을 변경했습니다.</p>");

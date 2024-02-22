@@ -1,5 +1,6 @@
 package hyeonwoo.myapp.servlet.freeboard;
 
+import hyeonwoo.myapp.dao.AttachedFileDao;
 import hyeonwoo.myapp.dao.FreeBoardDao;
 import hyeonwoo.myapp.vo.FreeBoard;
 import hyeonwoo.myapp.vo.User;
@@ -14,10 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/freeboard/delete")
 public class FreeBoardDeleteServlet extends HttpServlet {
   private FreeBoardDao freeboardDao;
+  private AttachedFileDao attachedFileDao;
 
   @Override
   public void init() {
     this.freeboardDao = (FreeBoardDao) this.getServletContext().getAttribute("freeboardDao");
+    this.attachedFileDao = (AttachedFileDao) this.getServletContext()
+        .getAttribute("attachedFileDao");
   }
 
   @Override
@@ -59,6 +63,8 @@ public class FreeBoardDeleteServlet extends HttpServlet {
         out.println("</html>");
         return;
       }
+
+      attachedFileDao.deleteAll(no);
       freeboardDao.delete(no);
 
     } catch (Exception e) {

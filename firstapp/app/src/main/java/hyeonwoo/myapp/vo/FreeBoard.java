@@ -13,6 +13,7 @@ public class FreeBoard implements Serializable {
   private String content;
   private User writer;
   private Date createdDate;
+  private List<AttachedFile> files;
 
   @Override
   public String toString() {
@@ -22,15 +23,8 @@ public class FreeBoard implements Serializable {
         ", content='" + content + '\'' +
         ", writer=" + writer +
         ", createdDate=" + createdDate +
+        ", files=" + files +
         '}';
-  }
-
-  public User getWriter() {
-    return writer;
-  }
-
-  public void setWriter(User writer) {
-    this.writer = writer;
   }
 
   public int getNo() {
@@ -57,11 +51,27 @@ public class FreeBoard implements Serializable {
     this.content = content;
   }
 
+  public User getWriter() {
+    return writer;
+  }
+
+  public void setWriter(User writer) {
+    this.writer = writer;
+  }
+
   public Date getCreatedDate() {
     return createdDate;
   }
 
   public void setCreatedDate(Date createdDate) {
     this.createdDate = createdDate;
+  }
+
+  public List<AttachedFile> getFiles() {
+    return files;
+  }
+
+  public void setFiles(List<AttachedFile> files) {
+    this.files = files;
   }
 }

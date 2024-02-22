@@ -53,7 +53,7 @@ public class ReviewListServlet extends GenericServlet {
 
       for (Review review : list) {
         out.printf(
-            "<tr> <td>%d</td> <td><a href='/review/view?category=%d&no=%1$d'>%s</a></td> <td>%d</td> <td>%s</td> <td>%s</td> <td>%d</td> </tr>\n",
+            "<tr> <td>%d</td> <td><a href='/review/view?category=%d&no=%1$d'>%s</a></td> <td>%d</td> <td>%s</td> <td>%s</td> </tr>\n",
             review.getNo(),
             category,
             review.getTitle(),
