@@ -72,6 +72,7 @@ public class BoardDaoImpl implements BoardDao {
                 + "from\n"
                 + "  boards b left outer join board_files bf on b.board_no=bf.board_no\n"
                 + "  inner join members m on b.writer=m.member_no\n"
+                + "  inner join members m on b.writer=m.member_no\n"
                 + "where\n"
                 + "  b.category=?\n"
                 + "group by\n"

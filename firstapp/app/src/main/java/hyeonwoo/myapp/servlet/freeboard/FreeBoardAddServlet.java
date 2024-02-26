@@ -54,6 +54,8 @@ public class FreeBoardAddServlet extends HttpServlet {
       return;
     }
 
+    System.out.println("title = "+request.getParameter("title"));
+    System.out.println("content = "+request.getParameter("content"));
     FreeBoard freeboard = new FreeBoard();
     freeboard.setTitle(request.getParameter("title"));
     freeboard.setContent(request.getParameter("content"));

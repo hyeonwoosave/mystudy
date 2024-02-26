@@ -54,6 +54,7 @@ public class FreeBoardViewServlet extends HttpServlet {
           return;
 
       }
+
       List<AttachedFile> files = attachedFileDao.findAllByBoardNo(no);
 
       out.println("<form action='/freeboard/update'>");

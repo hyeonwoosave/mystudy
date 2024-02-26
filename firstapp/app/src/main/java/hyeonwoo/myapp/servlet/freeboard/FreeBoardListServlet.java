@@ -38,7 +38,7 @@ public class FreeBoardListServlet extends GenericServlet {
     out.println("<body>");
     out.println("<h1>자유게시판</h1>");
 
-    out.println("<a href='/freeboard/add '>새 리뷰</a>\n");
+    out.println("<a href='/freeboard/form '>새 리뷰</a>\n");
 
     try {
       out.println("<table border='1'>");

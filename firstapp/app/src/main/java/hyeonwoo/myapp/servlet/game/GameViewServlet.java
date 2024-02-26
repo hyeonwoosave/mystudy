@@ -1,10 +1,13 @@
 package hyeonwoo.myapp.servlet.game;
 
 import hyeonwoo.myapp.dao.GameDao;
+import hyeonwoo.myapp.dao.ReviewDao;
 import hyeonwoo.myapp.vo.Game;
+import hyeonwoo.myapp.vo.Review;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,9 +19,13 @@ public class GameViewServlet extends HttpServlet {
 
   private GameDao gameDao;
 
+  private ReviewDao reviewDao;
+
   @Override
   public void init() {
+
     gameDao = (GameDao) this.getServletContext().getAttribute("gameDao");
+    reviewDao = (ReviewDao) this.getServletContext().getAttribute("reviewDao");
   }
 
   @Override
@@ -79,6 +86,28 @@ public class GameViewServlet extends HttpServlet {
       out.printf("  <a href='/game/delete?no=%d'>[삭제]</a>\n", no);
       out.println("</div>");
       out.println("</form>");
+
+
+      List<Review> list = reviewDao.findAll(1);
+
+      out.println("<table style='width:500px;margin-top:20px;' border='0'>");
+      for (Review review : list) {
+
+        out.println("	<tr>");
+        out.println("		<td style='width:20%;text-align:left;'>★★★★☆</td>");
+        out.println("		<td style='width:50%;text-align:left;'>"+review.getWriter().getName()+"</td>");
+        out.println("		<td style='width:30%;text-align:right;'>"+review.getCreatedDate()+"</td>");
+        out.println("	<tr>");
+        out.println("	<tr>");
+        out.println("		<td colspan='3' style='border-bottom:1px solid;'>"+review.getContent()+"</td>");
+        out.println("	</tr>");
+        out.println("	<tr style='height:10px;'><td colspan='3'></td></tr>");
+      }
+      out.println("<table>");
+
+
+
+
 
     } catch (Exception e) {
       out.println("<p>조회 오류!</p>");

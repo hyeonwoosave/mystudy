@@ -27,6 +27,7 @@ public class FreeBoardDaoImpl implements FreeBoardDao {
             PreparedStatement.RETURN_GENERATED_KEYS)) {
 
       pstmt.setString(1, freeboard.getTitle());
+      System.out.println("freeboard.getTitle()="+freeboard.getTitle());
       pstmt.setString(2, freeboard.getContent());
       pstmt.setInt(3, freeboard.getWriter().getNo());
 

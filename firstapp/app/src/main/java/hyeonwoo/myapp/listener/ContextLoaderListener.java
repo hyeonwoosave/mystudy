@@ -1,5 +1,7 @@
 package hyeonwoo.myapp.listener;
 
+import hyeonwoo.myapp.dao.AttachedFileDao;
+import hyeonwoo.myapp.dao.mysql.AttachedFileDaoImpl;
 import hyeonwoo.util.DBConnectionPool;
 import hyeonwoo.util.TransactionManager;
 import hyeonwoo.myapp.dao.FreeBoardDao;
@@ -35,6 +37,7 @@ public class ContextLoaderListener implements ServletContextListener {
     FreeBoardDao freeBoardDao = new FreeBoardDaoImpl(connectionPool);
     ReviewDao reviewDao = new ReviewDaoImpl(connectionPool);
     QnaDao qnaDao = new QnaDaoImpl(connectionPool);
+    AttachedFileDao attachedFileDao = new AttachedFileDaoImpl(connectionPool);
 
     TransactionManager txManager = new TransactionManager(connectionPool);
 
@@ -46,5 +49,8 @@ public class ContextLoaderListener implements ServletContextListener {
     웹애플리케이션저장소.setAttribute("reviewDao", reviewDao);
     웹애플리케이션저장소.setAttribute("qnaDao", qnaDao);
     웹애플리케이션저장소.setAttribute("txManager", txManager);
+    웹애플리케이션저장소.setAttribute("attachedFileDao", attachedFileDao);
+
+
   }
 }

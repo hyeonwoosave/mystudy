@@ -1,5 +1,6 @@
 package hyeonwoo.myapp.dao.mysql;
 
+import java.time.Clock;
 import java.util.List;
 import hyeonwoo.myapp.dao.AttachedFileDao;
 import hyeonwoo.myapp.dao.DaoException;
@@ -82,6 +83,7 @@ import java.util.List;
 
     @Override
     public List<AttachedFile> findAllByBoardNo(int freeboardNo) {
+
       try (Connection con = connectionPool.getConnection();
           PreparedStatement pstmt = con.prepareStatement(
               "select file_no, file_path, freeboard_no"
@@ -90,7 +92,6 @@ import java.util.List;
         pstmt.setInt(1, freeboardNo);
 
         try (ResultSet rs = pstmt.executeQuery()) {
-
           ArrayList<AttachedFile> list = new ArrayList<>();
 
           while (rs.next()) {
@@ -130,4 +131,5 @@ import java.util.List;
         throw new DaoException("데이터 가져오기 오류", e);
       }
     }
+
 }

@@ -68,7 +68,8 @@ public class ReviewDaoImpl implements ReviewDao {
                 + "  r.rating,\n"
                 + "  r.created_date,\n"
                 + "  u.user_no,\n"
-                + "  u.name\n"
+                + "  u.name,\n"
+                + "  r.content\n"
                 + "from\n"
                 + "  reviews r inner join users u on r.writer=u.user_no\n"
                 + "where\n"
@@ -89,6 +90,7 @@ public class ReviewDaoImpl implements ReviewDao {
           review.setNo(rs.getInt("review_no"));
           review.setTitle(rs.getString("title"));
           review.setRating(rs.getInt("rating"));
+          review.setContent(rs.getString("content"));
           review.setCreatedDate(rs.getDate("created_date"));
 
           User writer = new User();
@@ -153,7 +155,7 @@ public class ReviewDaoImpl implements ReviewDao {
   public int update(Review review) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "update reviews set title=?, rating=? content=? where review_no=?")) {
+            "update reviews set title=?, rating=?, content=? where review_no=?")) {
 
       pstmt.setString(1, review.getTitle());
       pstmt.setInt(2, review.getRating());
