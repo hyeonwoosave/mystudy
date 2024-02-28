@@ -15,12 +15,12 @@ insert into users(user_no,name,tel,email,password,created_date)
   values(103,'user3','010-3333-3333','user3@test.com',sha2('1111',256),'2024-3-3');
 
 -- reviews 데이터
-insert into reviews(review_no,title,rating,content,writer,category)
-  values(1,'제목1','9','내용1',101,1);
-insert into reviews(review_no,title,rating,content,writer,category)
-  values(2,'제목2','1','내용2',102,1);
-insert into reviews(review_no,title,rating,content,writer,category)
-  values(3,'제목3','6','내용3',103,2);
+insert into reviews(review_no,rating,content,writer,category)
+  values(1,'9','내용1',101,1);
+insert into reviews(review_no,rating,content,writer,category)
+  values(2,'1','내용2',102,1);
+insert into reviews(review_no,rating,content,writer,category)
+  values(3,'6','내용3',103,2);
 
 -- freeboards 데이터
 insert into freeboards(freeboard_no,title,content,writer)

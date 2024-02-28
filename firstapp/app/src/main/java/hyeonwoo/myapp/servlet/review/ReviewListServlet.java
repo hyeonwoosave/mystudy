@@ -45,7 +45,7 @@ public class ReviewListServlet extends GenericServlet {
     try {
       out.println("<table border='1'>");
       out.println("    <thead>");
-      out.println("    <tr> <th>번호</th> <th>제목</th> <th>평점</th> <th>작성자</th> <th>등록일</th> </tr>");
+      out.println("    <tr> <th>번호</th> <th>평점</th> <th>내용</th> <th>작성자</th> <th>등록일</th> </tr>");
       out.println("    </thead>");
       out.println("    <tbody>");
 
@@ -53,11 +53,11 @@ public class ReviewListServlet extends GenericServlet {
 
       for (Review review : list) {
         out.printf(
-            "<tr> <td>%d</td> <td><a href='/review/view?category=%d&no=%1$d'>%s</a></td> <td>%d</td> <td>%s</td> <td>%s</td> </tr>\n",
+            "<tr> <td>%d</td> <td><a href='/review/view?category=%d&no=%1$d'>%d</a></td> <td>%s</td> <td>%s</td> <td>%s</td> </tr>\n",
             review.getNo(),
             category,
-            review.getTitle(),
             review.getRating(),
+            review.getContent(),
             review.getWriter().getName(),
             review.getCreatedDate());
       }

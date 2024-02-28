@@ -94,7 +94,7 @@ public class GameViewServlet extends HttpServlet {
       for (Review review : list) {
 
         out.println("	<tr>");
-        out.println("		<td style='width:20%;text-align:left;'>★★★★☆</td>");
+        out.println("		<td style='width:20%;text-align:left;'>평점: "+review.getRating()+"</td>");
         out.println("		<td style='width:50%;text-align:left;'>"+review.getWriter().getName()+"</td>");
         out.println("		<td style='width:30%;text-align:right;'>"+review.getCreatedDate()+"</td>");
         out.println("	<tr>");
@@ -104,10 +104,6 @@ public class GameViewServlet extends HttpServlet {
         out.println("	<tr style='height:10px;'><td colspan='3'></td></tr>");
       }
       out.println("<table>");
-
-
-
-
 
     } catch (Exception e) {
       out.println("<p>조회 오류!</p>");

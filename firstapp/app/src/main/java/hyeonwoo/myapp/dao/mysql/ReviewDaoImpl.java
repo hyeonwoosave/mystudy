@@ -23,14 +23,13 @@ public class ReviewDaoImpl implements ReviewDao {
   public void add(Review review) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "insert into reviews(title,rating,content,writer,category) values(?,?,?,?,?)",
+            "insert into reviews(rating,content,writer,category) values(?,?,?,?)",
             PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-      pstmt.setString(1, review.getTitle());
-      pstmt.setInt(2, review.getRating());
-      pstmt.setString(3, review.getContent());
-      pstmt.setInt(4, review.getWriter().getNo());
-      pstmt.setInt(5, review.getCategory());
+      pstmt.setInt(1, review.getRating());
+      pstmt.setString(2, review.getContent());
+      pstmt.setInt(3, review.getWriter().getNo());
+      pstmt.setInt(4, review.getCategory());
 
       pstmt.executeUpdate();
 
@@ -64,7 +63,6 @@ public class ReviewDaoImpl implements ReviewDao {
         PreparedStatement pstmt = con.prepareStatement(
             "select\n"
                 + "  r.review_no,\n"
-                + "  r.title,\n"
                 + "  r.rating,\n"
                 + "  r.created_date,\n"
                 + "  u.user_no,\n"
@@ -88,7 +86,6 @@ public class ReviewDaoImpl implements ReviewDao {
         while (rs.next()) {
           Review review = new Review();
           review.setNo(rs.getInt("review_no"));
-          review.setTitle(rs.getString("title"));
           review.setRating(rs.getInt("rating"));
           review.setContent(rs.getString("content"));
           review.setCreatedDate(rs.getDate("created_date"));
@@ -115,7 +112,6 @@ public class ReviewDaoImpl implements ReviewDao {
         PreparedStatement pstmt = con.prepareStatement(
             "select"
                 + "  r.review_no,\n"
-                + "  r.title,\n"
                 + "  r.rating,\n"
                 + "  r.content,"
                 + "  r.created_date,\n"
@@ -131,7 +127,6 @@ public class ReviewDaoImpl implements ReviewDao {
         if (rs.next()) {
           Review review = new Review();
           review.setNo(rs.getInt("review_no"));
-          review.setTitle(rs.getString("title"));
           review.setRating(rs.getInt("rating"));
           review.setContent(rs.getString("content"));
           review.setCreatedDate(rs.getDate("created_date"));
@@ -155,12 +150,11 @@ public class ReviewDaoImpl implements ReviewDao {
   public int update(Review review) {
     try (Connection con = connectionPool.getConnection();
         PreparedStatement pstmt = con.prepareStatement(
-            "update reviews set title=?, rating=?, content=? where review_no=?")) {
+            "update reviews set rating=?, content=? where review_no=?")) {
 
-      pstmt.setString(1, review.getTitle());
-      pstmt.setInt(2, review.getRating());
-      pstmt.setString(3, review.getContent());
-      pstmt.setInt(4, review.getNo());
+      pstmt.setInt(1, review.getRating());
+      pstmt.setString(2, review.getContent());
+      pstmt.setInt(3, review.getNo());
 
       return pstmt.executeUpdate();
 

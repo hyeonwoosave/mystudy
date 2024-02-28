@@ -53,7 +53,6 @@ public class ReviewAddServlet extends HttpServlet {
 
     Review review = new Review();
     review.setCategory(category);
-    review.setTitle(request.getParameter("title"));
     review.setRating(Integer.parseInt(request.getParameter("rating")));
     review.setContent(request.getParameter("content"));
     review.setWriter(loginUser);

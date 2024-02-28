@@ -67,7 +67,6 @@ public class ReviewUpdateServlet extends HttpServlet {
         return;
       }
 
-      review.setTitle(request.getParameter("title"));
       review.setRating(Integer.parseInt(request.getParameter("rating")));
       review.setContent(request.getParameter("content"));
 

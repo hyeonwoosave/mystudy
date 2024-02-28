@@ -58,9 +58,6 @@ public class ReviewViewServlet extends HttpServlet {
       out.printf("  번호: <input readonly name='no' type='text' value='%d'>\n", review.getNo());
       out.println("</div>");
       out.println("<div>");
-      out.printf("  제목: <input name='title' type='text' value='%s'>\n", review.getTitle());
-      out.println("</div>");
-      out.println("<div>");
       out.printf("  평점: <input name='rating' type='text' value='%d'>\n", review.getRating());
       out.println("</div>");
       out.println("<div>");

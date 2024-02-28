@@ -68,8 +68,8 @@ public class Servlet01 extends HttpServlet {
       out.println(i + " ===> 1234567890123456789012345678901234567890");
     }
 
-    response.setHeader("Refresh", "3;url=s100");
 
+    response.setHeader("Refresh", "3;url=s100");
     // 이 service() 메서드의 호출이 끝나면
     // 비로서 응답 프로토콜에 맞춰
     // 클라이언트로 헤더와 내용을 전송한다.

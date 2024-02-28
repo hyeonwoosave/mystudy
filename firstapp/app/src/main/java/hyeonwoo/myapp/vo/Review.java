@@ -10,7 +10,6 @@ public class Review implements Serializable {
 
   private int category;
   private int no;
-  private String title;
   private int rating;
   private String content;
   private User writer;
@@ -22,7 +21,6 @@ public class Review implements Serializable {
     return "Review{" +
         "category=" + category +
         ", no=" + no +
-        ", title='" + title + '\'' +
         ", rating=" + rating +
         ", content='" + content + '\'' +
         ", writer=" + writer +
@@ -52,14 +50,6 @@ public class Review implements Serializable {
 
   public void setNo(int no) {
     this.no = no;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
   }
 
   public int getRating() {

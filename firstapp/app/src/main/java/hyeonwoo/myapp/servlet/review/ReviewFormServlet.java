@@ -33,9 +33,6 @@ public class ReviewFormServlet extends HttpServlet {
     out.printf("<form action='/review/add?category=%d'>\n", category);
     out.printf("<input name='category' type='hidden' value='%d'>\n", category);
     out.println("<div>");
-    out.println("      제목: <input name='title' type='text'>");
-    out.println("</div>");
-    out.println("<div>");
     out.println("      평점: <input name='rating' type='text'>");
     out.println("</div>");
     out.println("<div>");
