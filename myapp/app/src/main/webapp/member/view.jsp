@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %>
-<%@ page import="bitcamp.myapp.vo.Member"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang='en'>
   <head>
@@ -10,28 +9,18 @@
 <body>
 
 <jsp:include page="/header.jsp"></jsp:include>
-<% 
-  Member member = (Member) request.getAttribute("member");
-%>
+
 <h1>회원</h1>
-<form action='/member/update' method='post' enctype='multipart/form-data'>
+<form action='/app/member/update' method='post' enctype='multipart/form-data'>
 <div>
-<%
-  String photoUrl = null;
-  if (member.getPhoto() != null) {
-    photoUrl = "/upload/" + member.getPhoto();
-  } else {
-    photoUrl = "/img/default-photo.jpeg";
-  }
-%>
     사진:
     <c:if test="${not empty member.photo}">
-    <a href='/upload/${member.photo}'> <img src='/upload/${member.photo}' height='80px'></a><br>
+      <a href='/upload/${member.photo}'> <img src='/upload/${member.photo}' height='80px'></a><br>
     </c:if>
     <c:if test="${empty member.photo}">
-    <a href='/img/default-photo.jpeg'> <img src='/img/default-photo.jpeg' height='80px'></a><br>
+      <a href='/img/default-photo.jpeg'> <img src='/img/default-photo.jpeg' height='80px'></a><br>
     </c:if>
-        <input name='photo' type='file'>
+      <input name='photo' type='file'>
 </div>
 <div>
     번호: <input readonly name='no' type='text' value='${member.no}'>
@@ -40,7 +29,7 @@
     이메일: <input name='email' type='text' value='${member.email}'>
 </div>
 <div>
-    이름: <input name='name' type='text' value='<${member.name}'>
+    이름: <input name='name' type='text' value='${member.name}'>
 </div>
 <div>
   암호: <input name='password' type='password'>
@@ -50,7 +39,7 @@
 </div>
 <div>
   <button>변경</button>
-  <a href='/member/delete?no=${member.no}'>[삭제]</a>
+  <a href='/app/member/delete?no=${member.no}'>[삭제]</a>
 </div>
 </form>
 
