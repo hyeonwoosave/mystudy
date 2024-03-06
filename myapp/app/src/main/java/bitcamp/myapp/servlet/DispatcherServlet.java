@@ -1,25 +1,12 @@
 package bitcamp.myapp.servlet;
 
+import bitcamp.myapp.controller.AssignmentController;
+import bitcamp.myapp.controller.AuthController;
+import bitcamp.myapp.controller.BoardController;
 import bitcamp.myapp.controller.HomeController;
+import bitcamp.myapp.controller.MemberController;
 import bitcamp.myapp.controller.RequestMapping;
-import bitcamp.myapp.controller.assignment.AssignmentAddController;
-import bitcamp.myapp.controller.assignment.AssignmentDeleteController;
-import bitcamp.myapp.controller.assignment.AssignmentListController;
-import bitcamp.myapp.controller.assignment.AssignmentUpdateController;
-import bitcamp.myapp.controller.assignment.AssignmentViewController;
-import bitcamp.myapp.controller.auth.LoginController;
-import bitcamp.myapp.controller.auth.LogoutController;
-import bitcamp.myapp.controller.board.BoardAddController;
-import bitcamp.myapp.controller.board.BoardDeleteController;
-import bitcamp.myapp.controller.board.BoardFileDeleteController;
-import bitcamp.myapp.controller.board.BoardListController;
-import bitcamp.myapp.controller.board.BoardUpdateController;
-import bitcamp.myapp.controller.board.BoardViewController;
-import bitcamp.myapp.controller.member.MemberAddController;
-import bitcamp.myapp.controller.member.MemberDeleteController;
-import bitcamp.myapp.controller.member.MemberListController;
-import bitcamp.myapp.controller.member.MemberUpdateController;
-import bitcamp.myapp.controller.member.MemberViewController;
+import bitcamp.myapp.controller.RequestParam;
 import bitcamp.myapp.dao.AssignmentDao;
 import bitcamp.myapp.dao.AttachedFileDao;
 import bitcamp.myapp.dao.BoardDao;
@@ -29,10 +16,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,7 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/app/*")
 public class DispatcherServlet extends HttpServlet {
 
-  private Map<String, Object> controllerMap = new HashMap<>();
+  private Map<String, RequestHandler> requestHandlerMap = new HashMap<>();
+  private List<Object> controllers = new ArrayList<>();
 
   @Override
   public void init() throws ServletException {
@@ -54,54 +47,33 @@ public class DispatcherServlet extends HttpServlet {
     AssignmentDao assignmentDao = (AssignmentDao) ctx.getAttribute("assignmentDao");
     AttachedFileDao attachedFileDao = (AttachedFileDao) ctx.getAttribute("attachedFileDao");
 
-    controllerMap.put("/home", new HomeController());
-
-    String memberUploadDir = this.getServletContext().getRealPath("/upload");
-    controllerMap.put("/member/list", new MemberListController(memberDao));
-    controllerMap.put("/member/view", new MemberViewController(memberDao));
-    controllerMap.put("/member/add", new MemberAddController(memberDao, memberUploadDir));
-    controllerMap.put("/member/update", new MemberUpdateController(memberDao, memberUploadDir));
-    controllerMap.put("/member/delete", new MemberDeleteController(memberDao, memberUploadDir));
-
-    controllerMap.put("/assignment/list", new AssignmentListController(assignmentDao));
-    controllerMap.put("/assignment/view", new AssignmentViewController(assignmentDao));
-    controllerMap.put("/assignment/add", new AssignmentAddController(assignmentDao));
-    controllerMap.put("/assignment/update", new AssignmentUpdateController(assignmentDao));
-    controllerMap.put("/assignment/delete", new AssignmentDeleteController(assignmentDao));
-
-    controllerMap.put("/auth/login", new LoginController(memberDao));
-    controllerMap.put("/auth/logout", new LogoutController());
+    controllers.add(new HomeController());
+    controllers.add(new AssignmentController(assignmentDao));
+    controllers.add(new AuthController(memberDao));
 
     String boardUploadDir = this.getServletContext().getRealPath("/upload/board");
-    controllerMap.put("/board/list", new BoardListController(boardDao));
-    controllerMap.put("/board/view", new BoardViewController(boardDao, attachedFileDao));
-    controllerMap.put("/board/add",
-        new BoardAddController(txManager, boardDao, attachedFileDao, boardUploadDir));
-    controllerMap.put("/board/update",
-        new BoardUpdateController(txManager, boardDao, attachedFileDao, boardUploadDir));
-    controllerMap.put("/board/delete",
-        new BoardDeleteController(txManager, boardDao, attachedFileDao, boardUploadDir));
-    controllerMap.put("/board/file/delete",
-        new BoardFileDeleteController(boardDao, attachedFileDao, boardUploadDir));
+    controllers.add(new BoardController(txManager, boardDao, attachedFileDao, boardUploadDir));
+
+    String memberUploadDir = this.getServletContext().getRealPath("/upload");
+    controllers.add(new MemberController(memberDao, memberUploadDir));
+
+    prepareRequestHandlers(controllers);
   }
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    // URL에서 요청한 페이지 컨트롤러를 실행한다.
-    Object controller = controllerMap.get(request.getPathInfo());
-    if (controller == null) {
-      throw new ServletException(request.getPathInfo() + " 요청 페이지를 찾을 수 없습니다.");
-    }
-
     try {
-      Method requestHandler = findRequestHandler(controller);
+      // URL 요청을 처리할 request handler를 찾는다.
+      RequestHandler requestHandler = requestHandlerMap.get(request.getPathInfo());
       if (requestHandler == null) {
         throw new Exception(request.getPathInfo() + " 요청 페이지를 찾을 수 없습니다.");
       }
 
-      String viewUrl = (String) requestHandler.invoke(controller, request, response);
+      Object[] args = prepareRequestHandlerArguments(requestHandler.handler, request, response);
+
+      String viewUrl = (String) requestHandler.handler.invoke(requestHandler.controller, args);
 
       // 페이지 컨트롤러가 알려준 JSP로 포워딩 한다.
       if (viewUrl.startsWith("redirect:")) {
@@ -123,14 +95,65 @@ public class DispatcherServlet extends HttpServlet {
     }
   }
 
-  private Method findRequestHandler(Object controller) {
-    Method[] methods = controller.getClass().getDeclaredMethods();
-    for (Method m : methods) {
-      RequestMapping requestMapping = m.getAnnotation(RequestMapping.class);
-      if (requestMapping != null) {
-        return m;
+  private void prepareRequestHandlers(List<Object> controllers) {
+    for (Object controller : controllers) {
+      Method[] methods = controller.getClass().getDeclaredMethods();
+      for (Method m : methods) {
+        RequestMapping requestMapping = m.getAnnotation(RequestMapping.class);
+        if (requestMapping != null) {
+          requestHandlerMap.put(requestMapping.value(), new RequestHandler(controller, m));
+        }
       }
     }
-    return null;
   }
+
+  private Object[] prepareRequestHandlerArguments(
+      Method handler,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+
+    // 요청 핸들러의 파라미터 정보를 알아낸다.
+    Parameter[] params = handler.getParameters();
+
+    // 파라미터에 전달할 값을 담을 배열을 준비한다.
+    Object[] args = new Object[params.length];
+
+    // 파라미터를 분석하여 각 파라미터에 맞는 값을 배열에 담는다.
+    for (int i = 0; i < args.length; i++) {
+      Parameter param = params[i];
+      if (param.getType() == HttpServletRequest.class
+          || param.getType() == ServletRequest.class) {
+        args[i] = request;
+      } else if (param.getType() == HttpServletResponse.class
+          || param.getType() == ServletResponse.class) {
+        args[i] = response;
+      } else {
+        RequestParam requestParam = param.getAnnotation(RequestParam.class);
+        String paramName = requestParam.value();
+        String paramValue = request.getParameter(paramName);
+        if (param.getType() == byte.class) {
+          args[i] = Byte.parseByte(paramValue);
+        } else if (param.getType() == short.class) {
+          args[i] = Short.parseShort(paramValue);
+        } else if (param.getType() == int.class) {
+          args[i] = Integer.parseInt(paramValue);
+        } else if (param.getType() == long.class) {
+          args[i] = Long.parseLong(paramValue);
+        } else if (param.getType() == float.class) {
+          args[i] = Float.parseFloat(paramValue);
+        } else if (param.getType() == double.class) {
+          args[i] = Double.parseDouble(paramValue);
+        } else if (param.getType() == boolean.class) {
+          args[i] = Boolean.parseBoolean(paramValue);
+        } else if (param.getType() == char.class) {
+          args[i] = paramValue.charAt(0);
+        } else {
+          args[i] = paramValue;
+        }
+      }
+    }
+
+    return args;
+  }
+
 }
