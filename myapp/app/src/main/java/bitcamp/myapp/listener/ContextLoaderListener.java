@@ -10,6 +10,8 @@ import bitcamp.myapp.dao.mysql.BoardDaoImpl;
 import bitcamp.myapp.dao.mysql.MemberDaoImpl;
 import bitcamp.util.DBConnectionPool;
 import bitcamp.util.TransactionManager;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -36,10 +38,10 @@ public class ContextLoaderListener implements ServletContextListener {
 
     // 서블릿에서 사용할 수 있도록 웹애플리케이션 저장소에 보관한다.
     ServletContext 웹애플리케이션저장소 = sce.getServletContext();
-    웹애플리케이션저장소.setAttribute("assignmentDao", assignmentDao);
-    웹애플리케이션저장소.setAttribute("memberDao", memberDao);
-    웹애플리케이션저장소.setAttribute("boardDao", boardDao);
-    웹애플리케이션저장소.setAttribute("attachedFileDao", attachedFileDao);
-    웹애플리케이션저장소.setAttribute("txManager", txManager);
+
+    Map<String, Object> beanMap = new HashMap<>();
+    beanMap.put("connectionPool", connectionPool);
+
+
   }
 }
