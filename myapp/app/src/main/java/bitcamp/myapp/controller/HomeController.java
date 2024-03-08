@@ -1,9 +1,14 @@
 package bitcamp.myapp.controller;
 
-import bitcamp.util.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Component
+@Controller
 public class HomeController {
+
+  public HomeController() {
+    System.out.println("HomeController() 호출됨!");
+  }
 
   @RequestMapping("/home")
   public String home()
