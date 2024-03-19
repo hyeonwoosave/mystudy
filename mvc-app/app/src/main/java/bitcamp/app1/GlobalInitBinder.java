@@ -1,77 +1,30 @@
 package bitcamp.app1;
 
-import java.beans.PropertyEditorSupport;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.InitBinder;
 
-// @ControllerAdvice
-// => 이름에 이미 역할에 대한 정보가 담겨있다.
-// => 페이지 컨트롤러를 실행할 때 충고하는 역할을 수행한다.
-//    즉 프론트 컨트롤러가 페이지 컨트롤러의 request handler를 호출하기 전에
-//    이 애노테이션이 붙은 클래스를 참고하여 적절한 메서드를 호출한다.
-//
 @ControllerAdvice
 public class GlobalInitBinder {
 
-  // 이 클래스에 프로퍼티 에디터를 등록하는 @InitBinder 메서드를 정의한다.
+  // 페이지 컨트롤러의 request handler를 호출할 때
+  // 요청 파라미터의 값을 request handler의 아규먼트로 바꿀 때 마다 호출되는 메서드
+  // => 이 메서드에서 파라미터 값을 형변환시키는 도구를 설정한다.
   @InitBinder
-  public void initBinder(WebDataBinder binder) {
+  public void initBinder(WebDataBinder 데이터변환등록기) {
+    데이터변환등록기.registerCustomEditor(
+        java.sql.Date.class, // String 값을 어떤 타입으로 바꿀 것인지 지정
+        new DatePropertyEditor() // String 값을 해당 타입으로 변환해줄 변환기 지정
+    );
 
-    DatePropertyEditor propEditor = new DatePropertyEditor();
-    binder.registerCustomEditor(java.util.Date.class, propEditor);
+    데이터변환등록기.registerCustomEditor(
+        Car.class, // String 값을 Car 객체로 만들 것이라고 지정
+        new CarPropertyEditor() // String 값을 Car 객체로 변환해줄 변환기 지정
+    );
 
-    binder.registerCustomEditor(Car.class, new CarPropertyEditor());
-
-    binder.registerCustomEditor(Engine.class, new EnginePropertyEditor());
-  }
-
-  class DatePropertyEditor extends PropertyEditorSupport {
-    @Override
-    public void setAsText(String text) throws IllegalArgumentException {
-      try {
-        // String ==> java.util.Date
-        // SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        // Date date = format.parse(text);
-        // setValue(date);
-
-        // String ==> java.sql.Date
-        setValue(java.sql.Date.valueOf(text));
-
-      } catch (Exception e) {
-        throw new IllegalArgumentException(e);
-      }
-    }
-  }
-
-  class CarPropertyEditor extends PropertyEditorSupport {
-    @Override
-    public void setAsText(String text) throws IllegalArgumentException {
-      String[] values = text.split(",");
-
-      Car car = new Car();
-      car.setModel(values[0]);
-      car.setCapacity(Integer.parseInt(values[1]));
-      car.setAuto(Boolean.parseBoolean(values[2]));
-      car.setCreatedDate(java.sql.Date.valueOf(values[3]));
-
-      setValue(car);
-    }
-  }
-
-  class EnginePropertyEditor extends PropertyEditorSupport {
-    @Override
-    public void setAsText(String text) throws IllegalArgumentException {
-      String[] values = text.split(",");
-
-      Engine engine = new Engine();
-      engine.setModel(values[0]);
-      engine.setCc(Integer.parseInt(values[1]));
-      engine.setValve(Integer.parseInt(values[1]));
-
-      setValue(engine);
-    }
+    데이터변환등록기.registerCustomEditor(
+        Engine.class, // String 값을 Engine 객체로 만들 것이라고 지정
+        new EnginePropertyEditor() // String 값을 Engine 객체로 변환해줄 변환기 지정
+    );
   }
 }
-
-
