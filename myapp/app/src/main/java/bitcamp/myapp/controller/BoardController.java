@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -42,10 +43,7 @@ public class BoardController {
   public String add(
       Board board,
       MultipartFile[] attachedFiles,
-      HttpSession session,
-      Model model) throws Exception {
-
-    model.addAttribute("category", board.getCategory());
+      HttpSession session) throws Exception {
 
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null) {
@@ -69,15 +67,38 @@ public class BoardController {
 
     boardService.add(board);
 
-    return "redirect:list";
+    return "redirect:list?category=" + board.getCategory();
 
   }
 
   @GetMapping("list")
-  public void list(int category, Model model) throws Exception {
+  public void list(
+      int category,
+      @RequestParam(defaultValue = "1") int pageNo,
+      @RequestParam(defaultValue = "3") int pageSize,
+      Model model) throws Exception {
+
+    if (pageSize < 3 || pageSize > 20) {
+      pageSize = 3;
+    }
+
+    if (pageNo < 1) {
+      pageNo = 1;
+    }
+
+    int numOfRecord = boardService.countAll(category);
+    int numOfPage = numOfRecord / pageSize + ((numOfRecord % pageSize) > 0 ? 1 : 0);
+
+    if (pageNo > numOfPage) {
+      pageNo = numOfPage;
+    }
+
     model.addAttribute("boardName", category == 1 ? "게시글" : "가입인사");
     model.addAttribute("category", category);
-    model.addAttribute("list", boardService.list(category));
+    model.addAttribute("list", boardService.list(category, pageNo, pageSize));
+    model.addAttribute("pageNo", pageNo);
+    model.addAttribute("pageSize", pageSize);
+    model.addAttribute("numOfPage", numOfPage);
   }
 
   @GetMapping("view")
@@ -96,10 +117,7 @@ public class BoardController {
   public String update(
       Board board,
       MultipartFile[] attachedFiles,
-      HttpSession session,
-      Model model) throws Exception {
-
-    model.addAttribute("category", board.getCategory());
+      HttpSession session) throws Exception {
 
     Member loginUser = (Member) session.getAttribute("loginUser");
     if (loginUser == null) {
@@ -130,7 +148,7 @@ public class BoardController {
 
     boardService.update(board);
 
-    return "redirect:list";
+    return "redirect:list?category=" + board.getCategory();
 
   }
 
