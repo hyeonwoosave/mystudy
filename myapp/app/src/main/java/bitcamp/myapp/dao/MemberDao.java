@@ -18,6 +18,8 @@ public interface MemberDao {
 
   public Member findBy(int no);
 
+  public Member selectMemberInfo(@Param("email") String email);
+
   public int update(Member member);
 
   public Member findByEmailAndPassword(

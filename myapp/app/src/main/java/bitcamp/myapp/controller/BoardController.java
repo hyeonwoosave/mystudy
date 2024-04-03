@@ -62,13 +62,12 @@ public class BoardController {
       }
     }
     if (files.size() > 0) {
-      board.setFiles(files);
+      board.setFileList(files);
     }
 
     boardService.add(board);
 
     return "redirect:list?category=" + board.getCategory();
-
   }
 
   @GetMapping("list")
@@ -143,7 +142,7 @@ public class BoardController {
       }
     }
     if (files.size() > 0) {
-      board.setFiles(files);
+      board.setFileList(files);
     }
 
     boardService.update(board);

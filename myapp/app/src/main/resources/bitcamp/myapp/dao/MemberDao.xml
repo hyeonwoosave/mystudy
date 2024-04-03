@@ -49,6 +49,18 @@
       member_no=#{value}
   </select>
 
+  <select id="selectMemberInfo" resultMap="MemberMap" parameterType="String">
+    select
+      email,
+      name,
+      photo,
+      created_date
+    from
+      members
+    where
+      email=#{email}
+  </select>
+
   <update id="update" parameterType="Member">
     update members set
       email=#{email},

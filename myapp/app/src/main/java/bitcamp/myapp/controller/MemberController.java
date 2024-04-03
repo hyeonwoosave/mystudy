@@ -3,6 +3,7 @@ package bitcamp.myapp.controller;
 import bitcamp.myapp.service.MemberService;
 import bitcamp.myapp.service.StorageService;
 import bitcamp.myapp.vo.Member;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +41,30 @@ public class MemberController implements InitializingBean {
 
   @GetMapping("form")
   public void form() throws Exception {
+  }
+
+  @GetMapping("myinfo")
+  public void myinfo(
+      Model model,
+      HttpSession session) throws Exception {
+    //db에서 로그인 사용자의 상세정보를 조회
+    Member sessionInfo = (Member)session.getAttribute("loginUser");
+    Member member = memberService.get(sessionInfo.getEmail());
+
+    //조회한 결과 model 에 add
+    model.addAttribute("member", member);
+  }
+
+  @GetMapping("myinfoUpdate")
+  public void myinfoUpdate(
+      Model model,
+      HttpSession session) throws Exception {
+    //db에서 로그인 사용자의 상세정보를 조회
+    Member sessionInfo = (Member)session.getAttribute("loginUser");
+    Member member = memberService.get(sessionInfo.getEmail());
+
+    //조회한 결과 model 에 add
+    model.addAttribute("member", member);
   }
 
   @PostMapping("add")
@@ -109,7 +134,7 @@ public class MemberController implements InitializingBean {
     }
 
     memberService.update(member);
-    return "redirect:list";
+    return "redirect:myinfo";
   }
 
   @GetMapping("delete")
