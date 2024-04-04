@@ -15,6 +15,7 @@
 
   <span data-th-if="${session.loginUser != null}"
         data-th-text="${session.loginUser.name}"></span>
+  <a data-th-href="@{/member/myinfo}" href="myinfo">내 정보</a>
   <a data-th-href="@{/auth/logout}" data-th-if="${session.loginUser != null}" href="auth/logout">로그아웃</a>
 
   <a data-th-href="@{/auth/form}" data-th-if="${session.loginUser == null}" href="auth/form">로그인</a>

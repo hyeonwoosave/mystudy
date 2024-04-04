@@ -61,6 +61,14 @@
       email=#{email}
   </select>
 
+  <update id="myinfoUpdate" parameterType="Member">
+    update members set
+      name=#{name},
+      photo=#{photo}
+    where
+    email=#{email}
+  </update>
+
   <update id="update" parameterType="Member">
     update members set
       email=#{email},

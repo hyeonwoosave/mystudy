@@ -48,23 +48,29 @@ public class MemberController implements InitializingBean {
       Model model,
       HttpSession session) throws Exception {
     //db에서 로그인 사용자의 상세정보를 조회
-    Member sessionInfo = (Member)session.getAttribute("loginUser");
-    Member member = memberService.get(sessionInfo.getEmail());
+    Member loginUser = (Member)session.getAttribute("loginUser");
+    Member member = memberService.get(loginUser.getEmail());
 
     //조회한 결과 model 에 add
     model.addAttribute("member", member);
   }
 
-  @GetMapping("myinfoUpdate")
-  public void myinfoUpdate(
-      Model model,
-      HttpSession session) throws Exception {
-    //db에서 로그인 사용자의 상세정보를 조회
-    Member sessionInfo = (Member)session.getAttribute("loginUser");
-    Member member = memberService.get(sessionInfo.getEmail());
+  @PostMapping("myinfoUpdate")
+  public String myinfoUpdate(Member member, MultipartFile file) throws Exception {
 
-    //조회한 결과 model 에 add
-    model.addAttribute("member", member);
+    Member old = memberService.get(member.getEmail());
+    member.setCreatedDate(old.getCreatedDate());
+
+    if (file.getSize() > 0) {
+      String filename = storageService.upload(this.bucketName, this.uploadDir, file);
+      member.setPhoto(filename);
+      storageService.delete(this.bucketName, this.uploadDir, old.getPhoto());
+    } else {
+      member.setPhoto(old.getPhoto());
+    }
+
+    memberService.myinfoUpdate(member);
+    return "redirect:myinfo";
   }
 
   @PostMapping("add")
@@ -134,7 +140,7 @@ public class MemberController implements InitializingBean {
     }
 
     memberService.update(member);
-    return "redirect:myinfo";
+    return "redirect:list";
   }
 
   @GetMapping("delete")

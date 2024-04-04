@@ -9,37 +9,36 @@
 <div data-th-replace="header :: header">머리말</div>
 
 <h2>내 정보</h2>
-
+<form action="" data-th-action="@{myinfoUpdate}" data-th-object="${member}"
+      enctype='multipart/form-data'
+      method='post'>
   <table border='1'>
     <tbody>
     <tr>
       <th>사진</th>
       <td>
-        <img data-th-if="*{member.photo}"
-             data-th-src="@{'https://rljiyddk2675.edge.naverncp.com/68i0l8DhXa/member/' + *{member.photo}(type=f,w=20,h=20,ttype=jpg)}"
-             src="/img/default-photo.jpeg">
-        <img data-th-unless="*{member.photo}" height='20px' src='/img/default-photo.jpeg'>
+        <a data-th-unless="*{photo}" href='/img/default-photo.jpeg'>
+          <img height='80px' src='/img/default-photo.jpeg'></a><br>
         <input name='file' type='file'>
       </td>
     </tr>
     <tr>
     <th>이메일</th>
-      <td><input type="text" data-th-value='*{member.email}' name="email" readonly/></td>
+      <td><input type="text" data-th-value='*{email}' name="email" /></td>
   </tr>
   <tr>
     <th>이름</th>
-    <td><input type="text" data-th-value='*{member.name}' name="name" /></td>
+    <td><input type="text" data-th-value='*{name}' name="name" /></td>
   </tr>
   <tr>
     <th>가입일</th>
-    <td ><input type="text" data-th-value="${#dates.format(member.createdDate,'yyyy-MM-dd')}" name="createdDate" readonly/></td>
+    <td ><input type="text" data-th-value="${#dates.format(member.createdDate,'yyyy-MM-dd')}" readonly/></td>
   </tr>
   </tbody>
 </table>
-
-<a data-th-href="@{/member/update}" href="update">저장</a>
+  <button>정보 저장</button>
+</form>
 
 <div data-th-replace="footer :: footer">꼬리말</div>
-</form>
 </body>
 </html>

@@ -44,6 +44,11 @@ public class DefaultMemberService implements MemberService {
   }
 
   @Override
+  public int myinfoUpdate(Member member) {
+    return memberDao.myinfoUpdate(member);
+  }
+
+  @Override
   public int update(Member member) {
     return memberDao.update(member);
   }

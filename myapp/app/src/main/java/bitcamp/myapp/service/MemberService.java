@@ -13,6 +13,8 @@ public interface MemberService {
 
   Member get(String email);
 
+  int myinfoUpdate(Member member);
+
   Member get(String email, String password);
 
   int update(Member member);

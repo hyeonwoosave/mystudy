@@ -6,7 +6,7 @@
     <inspection_tool class="CommentedOutCode" enabled="false" level="WEAK WARNING" enabled_by_default="false">
       <option name="minLines" value="4" />
     </inspection_tool>
-    <inspection_tool class="ConstantValue" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="ConstantValue" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="REPORT_CONSTANT_REFERENCE_VALUES" value="false" />
     </inspection_tool>
     <inspection_tool class="Convert2Diamond" enabled="false" level="WARNING" enabled_by_default="false" />
